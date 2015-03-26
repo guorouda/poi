@@ -48,7 +48,8 @@ public class DAOTest {
         System.out.println("DAOFactory successfully obtained: " + javabase);
 
         // Obtain UserDAO.
-        UserDAO userDAO = javabase.getUserDAO();
+//        UserDAO userDAO = javabase.getUserDAO();
+        UserDAO userDAO = javabase.getDAOImpl(UserDAO.class);
         System.out.println("UserDAO successfully obtained: " + userDAO);
 
         // Create user.

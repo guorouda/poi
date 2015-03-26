@@ -50,9 +50,15 @@ public class UserDAOJDBC implements UserDAO {
      * inside the DAO package only.
      * @param daoFactory The DAOFactory to construct this User DAO for.
      */
-    UserDAOJDBC(DAOFactory daoFactory) {
-        this.daoFactory = daoFactory;
-    }
+//    UserDAOJDBC(DAOFactory daoFactory) {
+//        this.daoFactory = daoFactory;
+//    }
+    
+	@Override
+	public void setDAOFactory(DAOFactory daoFactory) {
+		this.daoFactory = daoFactory;
+	}
+    
 
     // Actions ------------------------------------------------------------------------------------
 

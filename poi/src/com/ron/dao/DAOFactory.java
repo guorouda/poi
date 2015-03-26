@@ -132,10 +132,48 @@ public abstract class DAOFactory {
      * Returns the User DAO associated with the current DAOFactory.
      * @return The User DAO associated with the current DAOFactory.
      */
-    public UserDAO getUserDAO() {
-        return new UserDAOJDBC(this);
-    }
+//    public UserDAO getUserDAO() {
+//        return new UserDAOJDBC(this);
+//    }
 
     // You can add more DAO implementation getters here.
+    
+    public <DAO extends BaseDAO> DAO getDAOImpl(Class<DAO> daoInterface) throws DAOConfigurationException {
+		String daoInterfaceName = daoInterface.getName();
+		System.out.println("daoInterfaceName: " + daoInterfaceName);
+		
+		if (!daoInterface.isInterface()) {
+		    throw new DAOConfigurationException("Class '" + daoInterfaceName + "'"
+		        + " is actually not an Interface.");
+		}
+		
+		
+		String daoClassName = "com.ron.dao.UserDAOJDBC";//            String daoClassName = daoProperties.getProperty(daoInterfaceName, true);
+		DAO daoImplementation;
+		
+		try {
+		    daoImplementation = daoInterface.cast(Class.forName(daoClassName).newInstance());
+		} catch (ClassNotFoundException e) {
+		    throw new DAOConfigurationException("DAO class '" + daoClassName
+		        + "' is missing in classpath. Verify the class or the '" + daoInterfaceName
+		        + "' property.", e);
+		} catch (IllegalAccessException e) {
+		    throw new DAOConfigurationException("DAO class '" + daoClassName
+		        + "' cannot be accessed. Verify the class or the '" + daoInterfaceName
+		        + "' property.", e);
+		} catch (InstantiationException e) {
+		    throw new DAOConfigurationException("DAO class '" + daoClassName
+		        + "' cannot be instantiated. Verify the class or the '" + daoInterfaceName
+		        + "' property.", e);
+		} catch (ClassCastException e) {
+		    throw new DAOConfigurationException("DAO class '" + daoClassName
+		        + "' does not implement '" + daoInterfaceName + "'. Verify the class or the '"
+		        + daoInterfaceName + "' property.", e);
+		}
+		
+		daoImplementation.setDAOFactory(this);
+		
+		return daoImplementation;
+    }
 
 }

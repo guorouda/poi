@@ -13,7 +13,7 @@ import com.ron.model.User;
  * @author BalusC
  * @link http://balusc.blogspot.com/2008/07/dao-tutorial-data-layer.html
  */
-public interface UserDAO {
+public interface UserDAO extends BaseDAO{
 
     // Actions ------------------------------------------------------------------------------------
 
