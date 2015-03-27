@@ -18,7 +18,7 @@ import com.ron.model.User;
  * @author BalusC
  * @link http://balusc.blogspot.com/2008/07/dao-tutorial-data-layer.html
  */
-public class UserDAOJDBC implements UserDAO {
+public class UserDAOJDBC extends BaseDAOJDBC implements UserDAO {
 
     // Constants ----------------------------------------------------------------------------------
 	
@@ -41,7 +41,7 @@ public class UserDAOJDBC implements UserDAO {
 
     // Vars ---------------------------------------------------------------------------------------
 
-    private DAOFactory daoFactory;
+//    private DAOFactory daoFactory;
 
     // Constructors -------------------------------------------------------------------------------
 
@@ -54,10 +54,10 @@ public class UserDAOJDBC implements UserDAO {
 //        this.daoFactory = daoFactory;
 //    }
     
-	@Override
-	public void setDAOFactory(DAOFactory daoFactory) {
-		this.daoFactory = daoFactory;
-	}
+//	@Override
+//	public void setDAOFactory(DAOFactory daoFactory) {
+//		this.daoFactory = daoFactory;
+//	}
     
 
     // Actions ------------------------------------------------------------------------------------
