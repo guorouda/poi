@@ -53,7 +53,7 @@ public class Emsxxfb extends HttpServlet {
 	
 	private void processCommand(HttpServletRequest req, HttpServletResponse resp, String module, String action) throws Exception {
 		Command c = this.retrieveCommand(module);
-		c.process(req, resp, module, action);
+		Object object = c.process(req, resp, module, action);
 	}
 	
 	private Command retrieveCommand(String module) throws Exception

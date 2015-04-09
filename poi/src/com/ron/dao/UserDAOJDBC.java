@@ -9,6 +9,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.ron.exceptions.DAOException;
 import com.ron.model.User;
 
@@ -21,6 +23,7 @@ import com.ron.model.User;
 public class UserDAOJDBC extends BaseDAOJDBC implements UserDAO {
 
     // Constants ----------------------------------------------------------------------------------
+	public static Logger log = Logger.getLogger(UserDAOJDBC.class);
 	
     private static final String SQL_FIND_BY_ID =
         "SELECT id, email, firstname, lastname, birthdate FROM Users WHERE id = ?";
@@ -38,6 +41,7 @@ public class UserDAOJDBC extends BaseDAOJDBC implements UserDAO {
         "SELECT id FROM Users WHERE email = ?";
     private static final String SQL_CHANGE_PASSWORD =
         "UPDATE Users SET password = ? WHERE id = ?";
+    private static final String SQL_LOGIN = "select * from sms_user where id =  ? and password = ?";
 
     // Vars ---------------------------------------------------------------------------------------
 
@@ -288,5 +292,36 @@ public class UserDAOJDBC extends BaseDAOJDBC implements UserDAO {
         user.setBirthdate(resultSet.getDate("birthdate"));
         return user;
     }
+    
+    
+	public String login(String username, String password) {   
+        Object[] values = { 
+               username,
+               password
+            };
+        
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = daoFactory.getConnection();
+            preparedStatement = prepareStatement(connection, SQL_LOGIN, false, values);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet != null && resultSet.next()) {
+            	String right = resultSet.getString("right");
+            	if(right != null && !right.isEmpty()){
+            		return "1," + right;
+            	}
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "0,0";
+        } finally {
+            close(connection, preparedStatement) ;
+        }
+
+        return "0,0";
+	}
 
 }

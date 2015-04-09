@@ -2,7 +2,7 @@ package com.ron.view;
 
 import com.ron.Command;
 
-public class LoginAction extends Command {
+public class UserAction extends Command {
 
 	@Override
 	public String list() {
@@ -20,6 +20,10 @@ public class LoginAction extends Command {
 	public String pr(){
 		String s = req.getParameter("s");
 		return s;
+	}
+	
+	private void validateLogin(String username, String password){
+		
 	}
 
 }

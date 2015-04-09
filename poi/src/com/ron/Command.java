@@ -21,16 +21,14 @@ public abstract class Command {
 	public abstract int myadd();
 	public abstract String pr();
 	
-	public void process(HttpServletRequest req, HttpServletResponse resp, String module, String action){
+	public Object process(HttpServletRequest req, HttpServletResponse resp, String module, String action){
 		this.req = req;
 		this.resp = resp;
-		String result;
+		Object object = null;
 		
 		try {
-			result = this.getClass().getMethod(action, NO_ARGS_CLASS).invoke(this, NO_ARGS_OBJECT).toString();
-			log.info(result);
+			object = this.getClass().getMethod(action, NO_ARGS_CLASS).invoke(this, NO_ARGS_OBJECT);
 		} catch (IllegalAccessException e) {
-			log.info("IllegalAccessException ");
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
@@ -41,6 +39,8 @@ public abstract class Command {
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		}
+		
+		return object;
 		
 	}
 
