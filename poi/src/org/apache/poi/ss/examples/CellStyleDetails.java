@@ -39,48 +39,53 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
  */
 public class CellStyleDetails {
     public static void main(String[] args) throws Exception {
-        if(args.length == 0) {
-           throw new IllegalArgumentException("Filename must be given");
-        }
+//        if(args.length == 0) {
+//           throw new IllegalArgumentException("Filename must be given");
+//        }
         
-        Workbook wb = WorkbookFactory.create(new File(args[0]));
+        Workbook wb = WorkbookFactory.create(new File("e:\\1\\15.xls"));
         DataFormatter formatter = new DataFormatter();
        
-        for(int sn=0; sn<wb.getNumberOfSheets(); sn++) {
-           Sheet sheet = wb.getSheetAt(sn);
-           System.out.println("Sheet #" + sn + " : " + sheet.getSheetName());
-           
+           Sheet sheet = wb.getSheetAt(0);
+           System.out.println("Sheet #" + 0 + " : " + sheet.getSheetName());
+           int k = 0;
            for(Row row : sheet) {
-              System.out.println("  Row " + row.getRowNum());
-              
+//              System.out.println("  Row " + row.getRowNum());
+        	  k++;
+        	  if(k<2){
+        		  continue;
+        	  }
+              int i = 0;
               for(Cell cell : row) {
-                 CellReference ref = new CellReference(cell);
-                 System.out.print("    " + ref.formatAsString());
-                 System.out.print(" (" + cell.getColumnIndex() + ") ");
-                 
-                 CellStyle style = cell.getCellStyle();
-                 System.out.print("Format=" + style.getDataFormatString() + " ");
-                 System.out.print("FG=" + renderColor(style.getFillForegroundColorColor()) + " ");
-                 System.out.print("BG=" + renderColor(style.getFillBackgroundColorColor()) + " ");
-                 
-                 Font font = wb.getFontAt( style.getFontIndex() );
-                 System.out.print("Font=" + font.getFontName() + " ");
-                 System.out.print("FontColor=");
-                 if(font instanceof HSSFFont) {
-                    System.out.print( renderColor( ((HSSFFont)font).getHSSFColor((HSSFWorkbook)wb)) );
-                 }
-                 if(font instanceof XSSFFont) {
-                    System.out.print( renderColor( ((XSSFFont)font).getXSSFColor()) );
-                 }
-                 
-                 System.out.println();
-                 System.out.println("        " + formatter.formatCellValue(cell));
+            	   i++;
+//                 CellReference ref = new CellReference(cell);
+//                 System.out.print("    " + ref.formatAsString());
+//                 System.out.print(" (" + cell.getColumnIndex() + ") ");
+//                 
+//                 CellStyle style = cell.getCellStyle();
+//                 System.out.print("Format=" + style.getDataFormatString() + " ");
+//                 System.out.print("FG=" + renderColor(style.getFillForegroundColorColor()) + " ");
+//                 System.out.print("BG=" + renderColor(style.getFillBackgroundColorColor()) + " ");
+//                 
+//                 Font font = wb.getFontAt( style.getFontIndex() );
+//                 System.out.print("Font=" + font.getFontName() + " ");
+//                 System.out.print("FontColor=");
+//                 if(font instanceof HSSFFont) {
+//                    System.out.print( renderColor( ((HSSFFont)font).getHSSFColor((HSSFWorkbook)wb)) );
+//                 }
+//                 if(font instanceof XSSFFont) {
+//                    System.out.print( renderColor( ((XSSFFont)font).getXSSFColor()) );
+//                 }
+//                 
+//                 System.out.println();
+            	  if(i == 2){
+            		  System.out.println("        " + formatter.formatCellValue(cell));
+            	  }
               }
            }
            
            System.out.println();
         }
-    }
     
     private static String renderColor(Color color) {
        if(color instanceof HSSFColor) {
