@@ -1,5 +1,6 @@
 package com.ron.dao;
 
+
 import static com.ron.dao.DAOUtil.*;
 
 import java.sql.Connection;
@@ -14,6 +15,7 @@ import org.apache.log4j.Logger;
 import com.ron.exceptions.DAOException;
 import com.ron.model.User;
 
+
 /**
  * This class represents a concrete JDBC implementation of the {@link UserDAO} interface.
  *
@@ -23,29 +25,23 @@ import com.ron.model.User;
 public class UserDAOJDBC extends BaseDAOJDBC implements UserDAO {
 
     // Constants ----------------------------------------------------------------------------------
-	public static Logger log = Logger.getLogger(UserDAOJDBC.class);
+    public static Logger log = Logger.getLogger(UserDAOJDBC.class);
 	
-    private static final String SQL_FIND_BY_ID =
-        "SELECT id, email, firstname, lastname, birthdate FROM Users WHERE id = ?";
-    private static final String SQL_FIND_BY_EMAIL_AND_PASSWORD =
-        "SELECT id, email, firstname, lastname, birthdate FROM Users WHERE email = ? AND password = ?";
-    private static final String SQL_LIST_ORDER_BY_ID =
-        "SELECT id, email, firstname, lastname, birthdate FROM Users ORDER BY id";
-    private static final String SQL_INSERT =
-        "INSERT INTO Users (id, email, password, firstname, lastname, birthdate) VALUES (users_id_seq.nextval, ?, ?, ?, ?, ?)";
-    private static final String SQL_UPDATE =
-        "UPDATE Users SET email = ?, firstname = ?, lastname = ?, birthdate = ? WHERE id = ?";
-    private static final String SQL_DELETE =
-        "DELETE FROM Users WHERE id = ?";
-    private static final String SQL_EXIST_EMAIL =
-        "SELECT id FROM Users WHERE email = ?";
-    private static final String SQL_CHANGE_PASSWORD =
-        "UPDATE Users SET password = ? WHERE id = ?";
-    private static final String SQL_LOGIN = "select * from sms_user where id =  ? and password = ?";
+    private static final String SQL_FIND_BY_ID = "SELECT id, email, firstname, lastname, birthdate FROM Users WHERE id = ?";
+    private static final String SQL_FIND_BY_EMAIL_AND_PASSWORD = "SELECT id, email, firstname, lastname, birthdate FROM Users WHERE email = ? AND password = ?";
+    private static final String SQL_LIST_ORDER_BY_ID = "SELECT id, email, firstname, lastname, birthdate FROM Users ORDER BY id";
+    private static final String SQL_INSERT = "INSERT INTO Users (id, email, password, firstname, lastname, birthdate) VALUES (users_id_seq.nextval, ?, ?, ?, ?, ?)";
+    private static final String SQL_UPDATE = "UPDATE Users SET email = ?, firstname = ?, lastname = ?, birthdate = ? WHERE id = ?";
+    private static final String SQL_DELETE = "DELETE FROM Users WHERE id = ?";
+    private static final String SQL_EXIST_EMAIL = "SELECT id FROM Users WHERE email = ?";
+    private static final String SQL_CHANGE_PASSWORD = "UPDATE Users SET password = ? WHERE id = ?";
+    private static final String SQL_LOGIN = "select * from xxfb_user where id =  ? and password = ?";
+
+    private static final String SQL_GETVALUE = "select * from xxfb_user where id = ?";
 
     // Vars ---------------------------------------------------------------------------------------
 
-//    private DAOFactory daoFactory;
+    // private DAOFactory daoFactory;
 
     // Constructors -------------------------------------------------------------------------------
 
@@ -54,26 +50,26 @@ public class UserDAOJDBC extends BaseDAOJDBC implements UserDAO {
      * inside the DAO package only.
      * @param daoFactory The DAOFactory to construct this User DAO for.
      */
-//    UserDAOJDBC(DAOFactory daoFactory) {
-//        this.daoFactory = daoFactory;
-//    }
+    // UserDAOJDBC(DAOFactory daoFactory) {
+    // this.daoFactory = daoFactory;
+    // }
     
-//	@Override
-//	public void setDAOFactory(DAOFactory daoFactory) {
-//		this.daoFactory = daoFactory;
-//	}
+    // @Override
+    // public void setDAOFactory(DAOFactory daoFactory) {
+    // this.daoFactory = daoFactory;
+    // }
     
 
     // Actions ------------------------------------------------------------------------------------
 
     @Override
-    public User find(Long id) throws DAOException {
+    public User find(String id) throws DAOException {
         return find(SQL_FIND_BY_ID, id);
     }
 
     @Override
-    public User find(String email, String password) throws DAOException {
-        return find(SQL_FIND_BY_EMAIL_AND_PASSWORD, email, password);
+    public User find(String name, String password) throws DAOException {
+        return find(SQL_FIND_BY_EMAIL_AND_PASSWORD, name, password);
     }
 
     /**
@@ -131,15 +127,13 @@ public class UserDAOJDBC extends BaseDAOJDBC implements UserDAO {
     @Override
     public void create(User user) throws IllegalArgumentException, DAOException {
         if (user.getId() != null) {
-            throw new IllegalArgumentException("User is already created, the user ID is not null.");
+            throw new IllegalArgumentException(
+                    "User is already created, the user ID is not null.");
         }
 
         Object[] values = {
-            user.getEmail(),
-            user.getPassword(),
-            user.getFirstname(),
-            user.getLastname(),
-            toSqlDate(user.getBirthdate())
+            user.getName(), user.getPassword(), user.getDepid(), user.getInuse(),
+            user.getRight()
         };
 
         Connection connection = null;
@@ -148,16 +142,19 @@ public class UserDAOJDBC extends BaseDAOJDBC implements UserDAO {
 
         try {
             connection = daoFactory.getConnection();
-            preparedStatement = prepareStatement(connection, SQL_INSERT, true, values);
+            preparedStatement = prepareStatement(connection, SQL_INSERT, true,
+                    values);
             int affectedRows = preparedStatement.executeUpdate();
+
             if (affectedRows == 0) {
                 throw new DAOException("Creating user failed, no rows affected.");
             }
             generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                user.setId(generatedKeys.getLong(1));
+                user.setId(generatedKeys.getLong(1) + "");
             } else {
-                throw new DAOException("Creating user failed, no generated key obtained.");
+                throw new DAOException(
+                        "Creating user failed, no generated key obtained.");
             }
         } catch (SQLException e) {
             throw new DAOException(e);
@@ -169,14 +166,12 @@ public class UserDAOJDBC extends BaseDAOJDBC implements UserDAO {
     @Override
     public void update(User user) throws DAOException {
         if (user.getId() == null) {
-            throw new IllegalArgumentException("User is not created yet, the user ID is null.");
+            throw new IllegalArgumentException(
+                    "User is not created yet, the user ID is null.");
         }
 
         Object[] values = {
-            user.getEmail(),
-            user.getFirstname(),
-            user.getLastname(),
-            toSqlDate(user.getBirthdate()),
+            user.getName(), user.getDepid(), user.getRight(), user.getInuse(),
             user.getId()
         };
 
@@ -185,8 +180,10 @@ public class UserDAOJDBC extends BaseDAOJDBC implements UserDAO {
 
         try {
             connection = daoFactory.getConnection();
-            preparedStatement = prepareStatement(connection, SQL_UPDATE, false, values);
+            preparedStatement = prepareStatement(connection, SQL_UPDATE, false,
+                    values);
             int affectedRows = preparedStatement.executeUpdate();
+
             if (affectedRows == 0) {
                 throw new DAOException("Updating user failed, no rows affected.");
             }
@@ -208,8 +205,10 @@ public class UserDAOJDBC extends BaseDAOJDBC implements UserDAO {
 
         try {
             connection = daoFactory.getConnection();
-            preparedStatement = prepareStatement(connection, SQL_DELETE, false, values);
+            preparedStatement = prepareStatement(connection, SQL_DELETE, false,
+                    values);
             int affectedRows = preparedStatement.executeUpdate();
+
             if (affectedRows == 0) {
                 throw new DAOException("Deleting user failed, no rows affected.");
             } else {
@@ -223,9 +222,9 @@ public class UserDAOJDBC extends BaseDAOJDBC implements UserDAO {
     }
 
     @Override
-    public boolean existEmail(String email) throws DAOException {
+    public boolean existName(String name) throws DAOException {
         Object[] values = { 
-            email
+            name 
         };
 
         Connection connection = null;
@@ -235,7 +234,8 @@ public class UserDAOJDBC extends BaseDAOJDBC implements UserDAO {
 
         try {
             connection = daoFactory.getConnection();
-            preparedStatement = prepareStatement(connection, SQL_EXIST_EMAIL, false, values);
+            preparedStatement = prepareStatement(connection, SQL_EXIST_EMAIL,
+                    false, values);
             resultSet = preparedStatement.executeQuery();
             exist = resultSet.next();
         } catch (SQLException e) {
@@ -250,12 +250,12 @@ public class UserDAOJDBC extends BaseDAOJDBC implements UserDAO {
     @Override
     public void changePassword(User user) throws DAOException {
         if (user.getId() == null) {
-            throw new IllegalArgumentException("User is not created yet, the user ID is null.");
+            throw new IllegalArgumentException(
+                    "User is not created yet, the user ID is null.");
         }
 
         Object[] values = {
-            user.getPassword(),
-            user.getId()
+            user.getPassword(), user.getId()
         };
 
         Connection connection = null;
@@ -263,10 +263,13 @@ public class UserDAOJDBC extends BaseDAOJDBC implements UserDAO {
 
         try {
             connection = daoFactory.getConnection();
-            preparedStatement = prepareStatement(connection, SQL_CHANGE_PASSWORD, false, values);
+            preparedStatement = prepareStatement(connection, SQL_CHANGE_PASSWORD,
+                    false, values);
             int affectedRows = preparedStatement.executeUpdate();
+
             if (affectedRows == 0) {
-                throw new DAOException("Changing password failed, no rows affected.");
+                throw new DAOException(
+                        "Changing password failed, no rows affected.");
             }
         } catch (SQLException e) {
             throw new DAOException(e);
@@ -285,20 +288,20 @@ public class UserDAOJDBC extends BaseDAOJDBC implements UserDAO {
      */
     private static User map(ResultSet resultSet) throws SQLException {
         User user = new User();
-        user.setId(resultSet.getLong("id"));
-        user.setEmail(resultSet.getString("email"));
-        user.setFirstname(resultSet.getString("firstname"));
-        user.setLastname(resultSet.getString("lastname"));
-        user.setBirthdate(resultSet.getDate("birthdate"));
+
+        user.setId(resultSet.getString("id"));
+        user.setName(resultSet.getString("name"));
+        user.setDepid(resultSet.getString("depid"));
+        user.setRight(resultSet.getString("right"));
+        user.setInuse(resultSet.getString("inuse"));
         return user;
     }
     
-    
-	public String login(String username, String password) {   
+    public String login(String username, String password) throws DAOException {   
+        log.info("...................");
         Object[] values = { 
-               username,
-               password
-            };
+            username, password
+        };
         
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -306,22 +309,51 @@ public class UserDAOJDBC extends BaseDAOJDBC implements UserDAO {
 
         try {
             connection = daoFactory.getConnection();
-            preparedStatement = prepareStatement(connection, SQL_LOGIN, false, values);
+            preparedStatement = prepareStatement(connection, SQL_LOGIN, false,
+                    values);
             resultSet = preparedStatement.executeQuery();
             if (resultSet != null && resultSet.next()) {
-            	String right = resultSet.getString("right");
-            	if(right != null && !right.isEmpty()){
-            		return "1," + right;
-            	}
+                String right = resultSet.getString("right");
+
+                if (right != null && !right.isEmpty()) {
+                    return "1," + right;
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
             return "0,0";
         } finally {
-            close(connection, preparedStatement) ;
+            close(connection, preparedStatement, resultSet);
         }
 
         return "0,0";
-	}
+    }
+	
+    public String getValue(User user, String key) throws DAOException {
+        String value = "";
+        Object[] values = {
+            user.getId()
+        };
+
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = daoFactory.getConnection();
+            preparedStatement = prepareStatement(connection, SQL_GETVALUE, false,
+                    values);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                value = resultSet.getString(key);
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        } finally {
+            close(connection, preparedStatement, resultSet);
+        }
+    	
+        return value;
+    }
 
 }

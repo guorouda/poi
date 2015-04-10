@@ -18,6 +18,7 @@ public abstract class Command {
 	protected HttpServletResponse resp;
 	
 	public abstract String list();
+	public abstract String list2();
 	public abstract int myadd();
 	public abstract String pr();
 	

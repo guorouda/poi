@@ -23,7 +23,7 @@ public interface UserDAO extends BaseDAO{
      * @return The user from the database matching the given ID, otherwise null.
      * @throws DAOException If something fails at database level.
      */
-    public User find(Long id) throws DAOException;
+    public User find(String id) throws DAOException;
 
     /**
      * Returns the user from the database matching the given email and password, otherwise null.
@@ -32,7 +32,7 @@ public interface UserDAO extends BaseDAO{
      * @return The user from the database matching the given email and password, otherwise null.
      * @throws DAOException If something fails at database level.
      */
-    public User find(String email, String password) throws DAOException;
+    public User find(String id, String password) throws DAOException;
 
     /**
      * Returns a list of all users from the database ordered by user ID. The list is never null and
@@ -74,7 +74,7 @@ public interface UserDAO extends BaseDAO{
      * @return True if the given email address exist in the database.
      * @throws DAOException If something fails at database level.
      */
-    public boolean existEmail(String email) throws DAOException;
+    public boolean existName(String name) throws DAOException;
 
     /**
      * Change the password of the given user. The user ID must not be null, otherwise it will throw
@@ -84,5 +84,9 @@ public interface UserDAO extends BaseDAO{
      * @throws DAOException If something fails at database level.
      */
     public void changePassword(User user) throws DAOException;
+    
+    public String login(String username, String password) throws DAOException;
+    
+    public String getValue(User user, String key) throws DAOException;
 
 }

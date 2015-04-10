@@ -1,4 +1,4 @@
-package com.ron;
+package com.ron.test;
 
 interface Faces{
 	public void tells();

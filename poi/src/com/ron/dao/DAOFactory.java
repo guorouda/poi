@@ -63,8 +63,13 @@ public abstract class DAOFactory {
     private static final String PROPERTY_DRIVER = "driver";
     private static final String PROPERTY_USERNAME = "username";
     private static final String PROPERTY_PASSWORD = "password";
+    
+    private static DAOFactory instance;
 
     // Actions ------------------------------------------------------------------------------------
+    public static DAOFactory getInstance() {
+    	return instance;
+    }
 
     /**
      * Returns a new DAOFactory instance for the given database name.
@@ -74,7 +79,7 @@ public abstract class DAOFactory {
      * missing in the classpath or cannot be loaded, or if a required property is missing in the
      * properties file, or if either the driver cannot be loaded or the datasource cannot be found.
      */
-    public static DAOFactory getInstance(String name) throws DAOConfigurationException {
+    public static DAOFactory init(String name) throws DAOConfigurationException {
         if (name == null) {
             throw new DAOConfigurationException("Database name is null.");
         }
@@ -85,7 +90,7 @@ public abstract class DAOFactory {
         String driverClassName = properties.getProperty(PROPERTY_DRIVER, false);
         String password = properties.getProperty(PROPERTY_PASSWORD, false);
         String username = properties.getProperty(PROPERTY_USERNAME, password != null);
-        DAOFactory instance;
+//        DAOFactory instance;
 
         // If driver is specified, then load it to let it register itself with DriverManager.
         if (driverClassName != null) {
@@ -140,15 +145,14 @@ public abstract class DAOFactory {
     
     public <DAO extends BaseDAO> DAO getDAOImpl(Class<DAO> daoInterface) throws DAOConfigurationException {
 		String daoInterfaceName = daoInterface.getName();
-		System.out.println("daoInterfaceName: " + daoInterfaceName);
+//		System.out.println("daoInterfaceName: " + daoInterfaceName);
 		
 		if (!daoInterface.isInterface()) {
 		    throw new DAOConfigurationException("Class '" + daoInterfaceName + "'"
 		        + " is actually not an Interface.");
 		}
 		
-		
-		String daoClassName = "com.ron.dao.UserDAOJDBC";//            String daoClassName = daoProperties.getProperty(daoInterfaceName, true);
+		String daoClassName = daoInterfaceName + "JDBC";//String daoClassName = daoProperties.getProperty(daoInterfaceName, true);
 		DAO daoImplementation;
 		
 		try {
