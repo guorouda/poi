@@ -16,15 +16,18 @@ public abstract class Command {
 	
 	protected HttpServletRequest req;
 	protected HttpServletResponse resp;
+	protected String username;
 	
 	public abstract String list();
 	public abstract String list2();
 	public abstract int myadd();
 	public abstract String pr();
 	
-	public Object process(HttpServletRequest req, HttpServletResponse resp, String module, String action){
+	public Object process(HttpServletRequest req, HttpServletResponse resp, String module, String action, String username){
 		this.req = req;
 		this.resp = resp;
+		this.username = username;
+		
 		Object object = null;
 		
 		try {

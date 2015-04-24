@@ -103,7 +103,8 @@ public class FileUploadController {
             for (int i = 0; i < files.length; i++) {  
                 String name = files[i].getName();  
                 if (name.trim().toLowerCase().endsWith(".png")) {  
-                	PNG png = new PNG(name, "<a href='/poi/download/temp/73Dir/" + name + "'>a</a>");
+                	String uuid = pngDir.substring(pngDir.lastIndexOf("/") + 1, pngDir.length());
+                	PNG png = new PNG(i + "", name, uuid, 5000);
                     list.add(png);
                 }  
             }  

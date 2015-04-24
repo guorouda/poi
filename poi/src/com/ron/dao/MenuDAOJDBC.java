@@ -6,16 +6,19 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import org.apache.log4j.Logger;
+
 import com.ron.exceptions.DAOException;
 import com.ron.model.User;
 
 public class MenuDAOJDBC extends BaseDAOJDBC implements MenuDAO {
 	
+	public static Logger log = Logger.getLogger(MenuDAOJDBC.class);
     private static final String SQL_MEMU = "select t.*, connect_by_isleaf leaf from xxfb_menu t where t.right <= ? and pid = ? connect by prior id = pid start with id = ?";
 
 	@Override
-	public String getMenu(String node) throws DAOException {
-		String value = getRight();
+	public String getMenu(String node, String username) throws DAOException {
+		String value = getRight(username);
 		String dept = node.substring(node.lastIndexOf('/') + 1, node.length());
 		
         Object[] values = {        	  
@@ -35,7 +38,7 @@ public class MenuDAOJDBC extends BaseDAOJDBC implements MenuDAO {
             resultSet = preparedStatement.executeQuery();
             while(resultSet.next()) {
             	String id = resultSet.getString("id"); 
-            	String text = resultSet.getString("name") ;
+            	String text = resultSet.getString("name");
             	Boolean leaf = resultSet.getBoolean("leaf");
            		sb.append("{"  + "\"id\":\"" + node + "/"+ id +  "\"," + "\"leaf\":" + leaf + ",\"text\":\"" + text + "\"},");
             }
@@ -50,10 +53,10 @@ public class MenuDAOJDBC extends BaseDAOJDBC implements MenuDAO {
 		return s;
 	}
 	
-	private String getRight(){
+	private String getRight(String username){
 		UserDAO userDAO = DAOFactory.getInstance().getDAOImpl(UserDAO.class);
 		User user = new User();
-		user.setId("hejie");
+		user.setId(username);
 		
 		return userDAO.getValue(user, "right");
 		

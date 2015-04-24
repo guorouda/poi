@@ -4,6 +4,6 @@ import com.ron.exceptions.DAOException;
 
 public interface MenuDAO extends BaseDAO {
 
-	public String getMenu(String node) throws DAOException;
+	public String getMenu(String node, String username) throws DAOException;
 
 }

@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import com.ron.dao.DAOFactory;
+import com.ron.utils.REncrypt;
+import com.ron.utils.StringUtil;
 
 
 public class Emsxxfb extends HttpServlet {
@@ -39,31 +42,39 @@ public class Emsxxfb extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		
+        resp.setContentType("text/html;charset=UTF-8");
+        PrintWriter out = resp.getWriter();
+        
+		String username = authen(req);
+		
 		String result = "";
 		String action = req.getParameter("action");
 		String _module = req.getRequestURI();
 		String _contextPath = req.getContextPath();
 		String module = _module.substring(_contextPath.length() + 1, _module.length() - extension.length() - 1);//+1 剔除'/'号， -1剔除'.'号
 		
-//		log.info(_contextPath);
-//		log.info(_module);
-//		log.info(module + "|" + action);
-		
+        if(action.equals("login") && module.equals("UserActon")){
+        	//add some code
+        }else{
+	        if(StringUtil.isEmpty(username)){
+	        	out.print("{success: false, message: '请重新登录'}");
+	        	return;
+	        }
+        }
+        
 		try{
-			result = (String)this.processCommand(req, resp, module, action);
+			result = (String)this.processCommand(req, resp, module, action, username);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
-        resp.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = resp.getWriter();
         out.print(result);
 		
 	}
 	
-	private Object processCommand(HttpServletRequest req, HttpServletResponse resp, String module, String action) throws Exception {
+	private Object processCommand(HttpServletRequest req, HttpServletResponse resp, String module, String action, String username) throws Exception {
 		Command c = this.retrieveCommand(module);
-		Object object = c.process(req, resp, module, action);
+		Object object = c.process(req, resp, module, action, username);
 		return object;
 	}
 	
@@ -72,5 +83,33 @@ public class Emsxxfb extends HttpServlet {
 		return (Command)Class.forName("com.ron.view."+ module).newInstance();
 	}
 	
+	private String authen(HttpServletRequest req){
+        Cookie[] cookies = req.getCookies();  
+        String[] cooks = null;   
+        String username = "";   
+        
+        if (cookies != null) {   
+            for (Cookie coo : cookies) {   
+            	if(coo.getName().equals("data")){
+            		String encrypt = coo.getValue(); //log.info("cookie: " + encrypt);
+            		String key = "guoguo";
+            		String decrypt = "";
+            		
+					try {
+						decrypt = REncrypt.aesDecrypt(encrypt, key);log.info(decrypt);
+		                cooks = decrypt.split("==");   
+		                if (cooks.length == 2) {
+		                    username = cooks[0];  
+		                }   
+					} catch (Exception e) {
+						log.error("cookie: ", e);
+					}             		
+            		
+            	}
+            }   
+        }
+        
+        return username;
+	}
 
 }
