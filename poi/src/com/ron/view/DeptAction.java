@@ -17,7 +17,6 @@ public class DeptAction extends Command {
 		return s;
 	}
 
-	@Override
 	public int myadd() {
 		int i = Integer.parseInt(req.getParameter("i"));
 		int j = Integer.parseInt(req.getParameter("j"));

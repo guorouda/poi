@@ -1,18 +1,22 @@
 package com.ron.model;
 
-public class PNG {
+public class Container {
+
 	String id;
 	String filename;
 	String uuid;
 	int duration;
 	
-	public PNG(String id, String filename, String uuid, int duration) {
-		this.id = id;
+	public Container(String filename, String uuid, int duration) {
 		this.filename = filename;
 		this.uuid = uuid;
 		this.duration = duration;
 	}
 	
+	public Container() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public String getId() {
 		return id;
 	}
@@ -37,5 +41,6 @@ public class PNG {
 	public void setDuration(int duration) {
 		this.duration = duration;
 	}
-
+	
+	
 }

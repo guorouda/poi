@@ -17,16 +17,4 @@ public class PlaylistAction extends Command {
 		return result;
 	}
 	
-	@Override
-	public int myadd() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public String pr() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

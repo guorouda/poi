@@ -15,7 +15,6 @@ public class UserAction extends Command {
 		return "Login";
 	}
 
-	@Override
 	public int myadd() {
 		int i = Integer.parseInt(req.getParameter("i"));
 		int j = Integer.parseInt(req.getParameter("j"));
@@ -32,6 +31,7 @@ public class UserAction extends Command {
 		String password = req.getParameter("password");
         UserDAO userDAO = DAOFactory.getInstance().getDAOImpl(UserDAO.class);
         String s = userDAO.login(username, password);
+        log.info(s);
         
         if(s.substring(0, 1).equals("1")){   
             int seconds = 5*60*60;   

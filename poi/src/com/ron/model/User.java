@@ -8,7 +8,6 @@ public class User {
 	String right;
 	String inuse;
 	
-	
 	public String getId() {
 		return id;
 	}

@@ -20,8 +20,8 @@ public abstract class Command {
 	
 	public abstract String list();
 	public abstract String list2();
-	public abstract int myadd();
-	public abstract String pr();
+//	public abstract int myadd();
+//	public abstract String pr();
 	
 	public Object process(HttpServletRequest req, HttpServletResponse resp, String module, String action, String username){
 		this.req = req;

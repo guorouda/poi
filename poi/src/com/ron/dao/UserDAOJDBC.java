@@ -298,7 +298,6 @@ public class UserDAOJDBC extends BaseDAOJDBC implements UserDAO {
     }
     
     public String login(String username, String password) throws DAOException {   
-        log.info("...................");
         Object[] values = { 
             username, password
         };

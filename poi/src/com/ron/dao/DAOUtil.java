@@ -45,7 +45,7 @@ public final class DAOUtil {
         setValues(preparedStatement, values);
         return preparedStatement;
     }
-
+    
     /**
      * Set the given parameter values in the given PreparedStatement.
      * @param connection The PreparedStatement to set the given parameter values in.

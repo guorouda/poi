@@ -42,7 +42,8 @@ public class Emsxxfb extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		
-        resp.setContentType("text/html;charset=UTF-8");
+//        resp.setContentType("text/html;charset=UTF-8");
+        resp.setContentType("application/json;charset=UTF-8");
         PrintWriter out = resp.getWriter();
         
 		String username = authen(req);
@@ -53,7 +54,7 @@ public class Emsxxfb extends HttpServlet {
 		String _contextPath = req.getContextPath();
 		String module = _module.substring(_contextPath.length() + 1, _module.length() - extension.length() - 1);//+1 剔除'/'号， -1剔除'.'号
 		
-        if(action.equals("login") && module.equals("UserActon")){
+        if(action.equals("login") && module.equals("UserAction")){
         	//add some code
         }else{
 	        if(StringUtil.isEmpty(username)){

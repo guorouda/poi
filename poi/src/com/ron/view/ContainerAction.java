@@ -13,19 +13,8 @@ public class ContainerAction extends Command {
 
 	@Override
 	public String list(){
-		return "{\"count\":100, \"user\":[{\"filename\":\"sara_pink.jpg\",\"duration\":2154,\"id\":1407243286000,\"url\":\"resources/images/sara_pink.jpg\"},{\"filename\":\"sara_pumpkin.jpg\",\"duration\":2588,\"id\":1407243286000,\"url\":\"resources/images/sara_pumpkin.jpg\"},{\"filename\":\"zack.jpg\",\"duration\":2901,\"id\":1407243286000,\"url\":\"resources/images/zack.jpg\"},{\"filename\":\"sara_smile.jpg\",\"duration\":2410,\"id\":1407243286000,\"url\":\"resources/images/sara_smile.jpg\"},{\"filename\":\"zack_sink.jpg\",\"duration\":2303,\"id\":1407243286000,\"url\":\"resources/images/zack_sink.jpg\"},{\"filename\":\"up_to_something.jpg\",\"duration\":2120,\"id\":1407243286000,\"url\":\"resources/images/up_to_something.jpg\"},{\"filename\":\"kids_hug.jpg\",\"duration\":2477,\"id\":1407243286000,\"url\":\"resources/images/kids_hug.jpg\"},{\"filename\":\"dance_fever.jpg\",\"duration\":2067,\"id\":1407243286000,\"url\":\"resources/images/dance_fever.jpg\"},{\"filename\":\"kids_hug2.jpg\",\"duration\":2476,\"id\":1407243286000,\"url\":\"resources/images/kids_hug2.jpg\"},{\"filename\":\"gangster_zack.jpg\",\"duration\":2115,\"id\":1407243286000,\"url\":\"resources/images/gangster_zack.jpg\"},{\"filename\":\"zacks_grill.jpg\",\"duration\":2825,\"id\":1407243286000,\"url\":\"resources/images/zacks_grill.jpg\"},{\"filename\":\"zack_dress.jpg\",\"duration\":2645,\"id\":1407243286000,\"url\":\"resources/images/zack_dress.jpg\"},{\"filename\":\"zack_hat.jpg\",\"duration\":2323,\"id\":1407243286000,\"url\":\"resources/images/zack_hat.jpg\"}]}";
+//		return "{\"count\":100, \"user\":[{\"filename\":\"sara_pink.jpg\",\"duration\":2154,\"id\":1407243286000,\"url\":\"resources/images/sara_pink.jpg\"},{\"filename\":\"sara_pumpkin.jpg\",\"duration\":2588,\"id\":1407243286000,\"url\":\"resources/images/sara_pumpkin.jpg\"},{\"filename\":\"zack.jpg\",\"duration\":2901,\"id\":1407243286000,\"url\":\"resources/images/zack.jpg\"},{\"filename\":\"sara_smile.jpg\",\"duration\":2410,\"id\":1407243286000,\"url\":\"resources/images/sara_smile.jpg\"},{\"filename\":\"zack_sink.jpg\",\"duration\":2303,\"id\":1407243286000,\"url\":\"resources/images/zack_sink.jpg\"},{\"filename\":\"up_to_something.jpg\",\"duration\":2120,\"id\":1407243286000,\"url\":\"resources/images/up_to_something.jpg\"},{\"filename\":\"kids_hug.jpg\",\"duration\":2477,\"id\":1407243286000,\"url\":\"resources/images/kids_hug.jpg\"},{\"filename\":\"dance_fever.jpg\",\"duration\":2067,\"id\":1407243286000,\"url\":\"resources/images/dance_fever.jpg\"},{\"filename\":\"kids_hug2.jpg\",\"duration\":2476,\"id\":1407243286000,\"url\":\"resources/images/kids_hug2.jpg\"},{\"filename\":\"gangster_zack.jpg\",\"duration\":2115,\"id\":1407243286000,\"url\":\"resources/images/gangster_zack.jpg\"},{\"filename\":\"zacks_grill.jpg\",\"duration\":2825,\"id\":1407243286000,\"url\":\"resources/images/zacks_grill.jpg\"},{\"filename\":\"zack_dress.jpg\",\"duration\":2645,\"id\":1407243286000,\"url\":\"resources/images/zack_dress.jpg\"},{\"filename\":\"zack_hat.jpg\",\"duration\":2323,\"id\":1407243286000,\"url\":\"resources/images/zack_hat.jpg\"}]}";
+		return "{\"count\":\"1\", \"user\":[{\"filename\":\"sara_pink.jpg\",\"duration\":\"2154\",\"id\":\"1407243286000\",\"uuid\":\"2222222222222222\"}]}";
 	}
 	
-	@Override
-	public int myadd() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public String pr() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

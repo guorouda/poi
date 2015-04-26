@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -22,9 +23,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ron.controller.converter.pdfConverter.OpenOfficePDFConverter;
 import com.ron.controller.converter.pdfConverter.PDFConverter;
 import com.ron.controller.converter.pngConverter.XpdfPNGConverter;
+import com.ron.dao.ContainerDAO;
+import com.ron.dao.DAOFactory;
+import com.ron.dao.FileUploadDAO;
+import com.ron.model.Container;
 import com.ron.model.ExtJSFormResult;
+import com.ron.model.FileUpload;
 import com.ron.model.FileUploadBean;
-import com.ron.model.PNG;
 import com.ron.pereference.SystemGlobals;
 import com.ron.utils.FileUtils;
 
@@ -62,17 +67,47 @@ public class FileUploadController {
 		try {
 			String appPath = SystemGlobals.getDefaultsValue("application.path");
 			String filename = uploadItem.getFile().getOriginalFilename();
-			String filepath = appPath + File.separator + "download" + File.separator + "temp" + File.separator + filename;
+			String extension = filename.substring(filename.lastIndexOf(".") + 1, filename.length());
+			
+			String uuid = UUID.randomUUID().toString();
+			String filepath = appPath + File.separator + "download" + File.separator + "temp" + File.separator + uuid + "." + extension;
 			File file = new File(filepath);
 			uploadItem.getFile().transferTo(file);
-			PDFConverter pdfConverter = new OpenOfficePDFConverter();
-			pdfConverter.convert2PDF(filepath);
-			XpdfPNGConverter xpdf = new XpdfPNGConverter(FileUtils.getFilePrefix(filepath)+".pdf");
-			String pngDir = FileUtils.getFilePrefix(filepath)+"Dir";
-			Process p = xpdf.toPNG(pngDir);
-			p.waitFor();
-			results = TellFront(FileList(pngDir)).toString();
-			log.info(results);
+			
+			String isimg = FileUtils.ImageTypeCheck(filepath);
+			log.info(isimg);
+			if(isimg.equals("8950") || isimg.equals("ffd8") || isimg.equals("4749") || isimg.equals("424d")){
+				results = "{\"message\":\"成功上传文件\", \"success\":\"true\", \"count\":1, \"user\":[{\"duration\":5000,\"filename\":\"" + uuid + "." + extension + "\",\"id\":\"2678\",\"uuid\":\"\"}]}";
+			}else{
+				results = "{\"message\":\"成功上传文件\", \"success\":\"true\", \"count\":1, \"user\":[{\"duration\":5000,\"filename\":\"video.png\",\"id\":\"2678\",\"uuid\":\"\"}]}";
+			}
+			
+			if(extension.equals("ppt")){
+				PDFConverter pdfConverter = new OpenOfficePDFConverter();
+				pdfConverter.convert2PDF(filepath);
+				extension = "pdf";
+			}
+			
+			if(extension.equals("pdf")){
+				XpdfPNGConverter xpdf = new XpdfPNGConverter(FileUtils.getFilePrefix(filepath)+".pdf");
+				String pngDir = FileUtils.getFilePrefix(filepath);
+				Process p = xpdf.toPNG(pngDir);
+				p.waitFor();
+				
+				ContainerDAO containerDAO = DAOFactory.getInstance().getDAOImpl(ContainerDAO.class);
+				List<Container> list = FileList(pngDir); log.info(list.size());
+				for(Container c:list){
+					Container container = new Container(c.getFilename(),c.getUuid(), c.getDuration());
+					log.info(c.getFilename() + ":" + c.getUuid() + " :" + c.getDuration());
+					containerDAO.create(container);
+				}
+				
+				results = TellFront(containerDAO.find(uuid)).toString();
+			}
+			
+			FileUpload fileUpload = new FileUpload(filename, uuid, "username");
+			FileUploadDAO fileUploadDAO = DAOFactory.getInstance().getDAOImpl(FileUploadDAO.class);
+			fileUploadDAO.create(fileUpload);
 			
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
@@ -94,8 +129,8 @@ public class FileUploadController {
 		return results;
 	}
 	
-	private List FileList(String pngDir){
-        List<PNG> list = new ArrayList<PNG>();
+	private List<Container> FileList(String pngDir){
+        List<Container> list = new ArrayList<Container>();
         
         File file = new File(pngDir);  
         if (file.isDirectory()) {  
@@ -104,8 +139,8 @@ public class FileUploadController {
                 String name = files[i].getName();  
                 if (name.trim().toLowerCase().endsWith(".png")) {  
                 	String uuid = pngDir.substring(pngDir.lastIndexOf("/") + 1, pngDir.length());
-                	PNG png = new PNG(i + "", name, uuid, 5000);
-                    list.add(png);
+                	Container container = new Container(name, uuid, 5000);
+                    list.add(container);
                 }  
             }  
         }
@@ -121,6 +156,7 @@ public class FileUploadController {
         m.put("success", true);
         m.put("count", list.size());
         m.put("user", ja);
+        m.put("message", " " + list.size() + " ");
         
         return JSONObject.fromObject(m);
 	}
