@@ -11,8 +11,5 @@ public interface PlayListDAO extends BaseDAO {
 	public void create(PlayList playList) throws IllegalArgumentException,
 			DAOException;
 
-	public void make(List<PlayListFile> list) throws IllegalArgumentException,
-			DAOException;
-
 	public List<PlayList> list() throws DAOException; 
 }

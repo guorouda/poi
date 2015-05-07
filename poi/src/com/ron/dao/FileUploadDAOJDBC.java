@@ -15,8 +15,8 @@ import com.ron.model.FileUpload;
 
 public class FileUploadDAOJDBC extends BaseDAOJDBC implements FileUploadDAO {
 
-    private static final String SQL_INSERT = "INSERT INTO xxfb_fileupload (id, filename, uuid, uploadtime, uploaduser) VALUES (fileupload_id_seq.nextval, ?, ?, sysdate, ?)";
-	private static final String SQL_LIST_ORDER_BY_ID = "select * from xxfb_fileupload";
+    private static final String SQL_INSERT = "INSERT INTO xxfb_fileupload (id, filename, uuid, uploadtime, uploaduser, type) VALUES (fileupload_id_seq.nextval, ?, ?, sysdate, ?, ?)";
+	private static final String SQL_LIST_ORDER_BY_ID = "select t.uuid, t.filename, t.type, count(b.filename) count from xxfb_fileupload t, xxfb_container b where t.uuid = b.uuid(+) group by t.uuid, t.filename, t.type";
 
 
 	@Override
@@ -29,7 +29,7 @@ public class FileUploadDAOJDBC extends BaseDAOJDBC implements FileUploadDAO {
 	    }
 	
 	    Object[] values = {
-	    		fileupload.getFilename(), fileupload.getUuid(), fileupload.getUploaduser()
+	    		fileupload.getFilename(), fileupload.getUuid(), fileupload.getUploaduser(), fileupload.getType()
 	    };
 	
 	    Connection connection = null;
@@ -86,12 +86,21 @@ public class FileUploadDAOJDBC extends BaseDAOJDBC implements FileUploadDAO {
 	
     private static FileUpload map(ResultSet resultSet) throws SQLException {
         FileUpload fileUpload = new FileUpload();
+        String filename = resultSet.getString("filename");
+        String uuid = resultSet.getString("uuid");
+        int count = resultSet.getInt("count");
+        String url = "";
 
-        fileUpload.setId(resultSet.getString("id"));
-        fileUpload.setFilename(resultSet.getString("filename"));
+        fileUpload.setFilename(filename);
         fileUpload.setUuid(resultSet.getString("uuid"));
-        fileUpload.setUploadtime(resultSet.getString("uploadtime"));
-        fileUpload.setUploaduser(resultSet.getString("uploaduser"));
+        fileUpload.setCount(count);
+        if(count == 0){
+        	url = "/poi/download/temp/" + uuid + filename.substring(filename.lastIndexOf("."), filename.length());
+        }else{
+        	url = "/poi/download/temp/" + uuid + "/image-000001.png";
+        }
+        fileUpload.setUrl(url);
+        fileUpload.setType(resultSet.getString("type"));
         
         
         return fileUpload;

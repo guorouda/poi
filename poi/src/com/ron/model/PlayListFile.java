@@ -5,6 +5,8 @@ public class PlayListFile {
 	int seq;
 	String filename;
 	String uuid;
+	String id;
+	String type;
 	
 	public PlayListFile(String listid, int seq, String filename, String uuid) {
 		this.listid = listid;
@@ -16,6 +18,15 @@ public class PlayListFile {
 	public PlayListFile() {
 	}
 	
+	public PlayListFile(String listid, int seq, String filename, String uuid,
+			String id) {
+		this.listid = listid;
+		this.seq = seq;
+		this.filename = filename;
+		this.uuid = uuid;
+		this.id = id;
+	}
+
 	public String getListid() {
 		return listid;
 	}
@@ -39,6 +50,18 @@ public class PlayListFile {
 	}
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
 	}
 
 }

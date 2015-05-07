@@ -119,5 +119,10 @@ public class JacobPDFConverter implements PDFConverter {
 		app.invoke("Quit");
 		
 	}
+	
+	public static void main(String[] args){
+		System.out.println(System.getProperty("java.library.path"));
+		JacobPDFConverter.ppt2PDF("c:\\users\\sun\\Desktop\\73重点城市标快推进方案.pptx", "c:\\users\\sun\\Desktop\\a.pdf");
+	}
 
 }

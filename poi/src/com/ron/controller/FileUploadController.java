@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ron.controller.converter.pdfConverter.JacobPDFConverter;
 import com.ron.controller.converter.pdfConverter.OpenOfficePDFConverter;
 import com.ron.controller.converter.pdfConverter.PDFConverter;
 import com.ron.controller.converter.pngConverter.XpdfPNGConverter;
@@ -68,23 +69,27 @@ public class FileUploadController {
 			String appPath = SystemGlobals.getDefaultsValue("application.path");
 			String filename = uploadItem.getFile().getOriginalFilename();
 			String extension = filename.substring(filename.lastIndexOf(".") + 1, filename.length());
+			String type = "VIDEO";
 			
 			String uuid = UUID.randomUUID().toString();
+			log.info(uuid);
 			String filepath = appPath + File.separator + "download" + File.separator + "temp" + File.separator + uuid + "." + extension;
 			File file = new File(filepath);
 			uploadItem.getFile().transferTo(file);
 			
 			String isimg = FileUtils.ImageTypeCheck(filepath);
-			log.info(isimg);
 			if(isimg.equals("8950") || isimg.equals("ffd8") || isimg.equals("4749") || isimg.equals("424d")){
 				results = "{\"message\":\"成功上传文件\", \"success\":\"true\", \"count\":1, \"user\":[{\"duration\":5000,\"filename\":\"" + uuid + "." + extension + "\",\"id\":\"2678\",\"uuid\":\"\"}]}";
+				type = "IMG";
 			}else{
 				results = "{\"message\":\"成功上传文件\", \"success\":\"true\", \"count\":1, \"user\":[{\"duration\":5000,\"filename\":\"video.png\",\"id\":\"2678\",\"uuid\":\"\"}]}";
 			}
 			
-			if(extension.equals("ppt")){
-				PDFConverter pdfConverter = new OpenOfficePDFConverter();
-				pdfConverter.convert2PDF(filepath);
+			if(extension.equalsIgnoreCase("ppt") || extension.equalsIgnoreCase("pptx")){
+//				PDFConverter pdfConverter = new OpenOfficePDFConverter();
+//				pdfConverter.convert2PDF(filepath);
+				String pdfFile = FileUtils.getFilePrefix(filepath)+".pdf";
+				JacobPDFConverter.ppt2PDF(filepath, pdfFile);
 				extension = "pdf";
 			}
 			
@@ -95,17 +100,17 @@ public class FileUploadController {
 				p.waitFor();
 				
 				ContainerDAO containerDAO = DAOFactory.getInstance().getDAOImpl(ContainerDAO.class);
-				List<Container> list = FileList(pngDir); log.info(list.size());
+				List<Container> list = FileList(pngDir); 
 				for(Container c:list){
 					Container container = new Container(c.getFilename(),c.getUuid(), c.getDuration());
-					log.info(c.getFilename() + ":" + c.getUuid() + " :" + c.getDuration());
 					containerDAO.create(container);
 				}
 				
 				results = TellFront(containerDAO.find(uuid)).toString();
+				type = "IMGS";
 			}
 			
-			FileUpload fileUpload = new FileUpload(filename, uuid, "username");
+			FileUpload fileUpload = new FileUpload(filename, uuid, "username", type);
 			FileUploadDAO fileUploadDAO = DAOFactory.getInstance().getDAOImpl(FileUploadDAO.class);
 			fileUploadDAO.create(fileUpload);
 			
@@ -138,7 +143,7 @@ public class FileUploadController {
             for (int i = 0; i < files.length; i++) {  
                 String name = files[i].getName();  
                 if (name.trim().toLowerCase().endsWith(".png")) {  
-                	String uuid = pngDir.substring(pngDir.lastIndexOf("/") + 1, pngDir.length());
+                	String uuid = pngDir.substring(pngDir.lastIndexOf("\\") + 1, pngDir.length());
                 	Container container = new Container(name, uuid, 5000);
                     list.add(container);
                 }  

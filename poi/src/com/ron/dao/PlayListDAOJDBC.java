@@ -20,7 +20,6 @@ public class PlayListDAOJDBC extends BaseDAOJDBC implements PlayListDAO {
 	public static Logger log = Logger.getLogger(PlayListDAOJDBC.class);
 
 	private static final String SQL_INSERT_PLAYLIST = "insert into xxfb_playlist (id, listname, createtime, createuser) values (playlist_id_seq.nextval, ?, sysdate, ?)";
-	private static final String SQL_INSERT_PLAYLISTFILE = "insert into xxfb_playlistfile (listid, seq, filename, uuid) values (?, ?, ?, ?)";
 
 	private static final String SQL_LIST_ORDER_BY_ID = null;
 
@@ -65,32 +64,6 @@ public class PlayListDAOJDBC extends BaseDAOJDBC implements PlayListDAO {
 
 	}
 	
-	@Override
-	public void make(List<PlayListFile> list) throws IllegalArgumentException,
-			DAOException {
-	    Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-
-        try {
-            connection = daoFactory.getConnection();
-            preparedStatement = connection.prepareStatement(SQL_INSERT_PLAYLISTFILE);
-            for(PlayListFile p:list){
-        	    Object[] values = {
-        	    		p.getListid(), p.getSeq(), p.getFilename(), p.getUuid()
-        	    };
-        	    setValues(preparedStatement, values);
-                preparedStatement.addBatch();
-            }
-            preparedStatement.executeBatch();
-        } catch (SQLException e) {
-            throw new DAOException(e);
-        } finally {
-            close(connection, preparedStatement, resultSet);
-        }
-		
-	}
-	
     @Override
     public List<PlayList> list() throws DAOException {
         Connection connection = null;
@@ -123,5 +96,6 @@ public class PlayListDAOJDBC extends BaseDAOJDBC implements PlayListDAO {
         playlist.setCreateuser(resultSet.getString("createuser"));
         
         return playlist;
-    }	
+    }
+
 }

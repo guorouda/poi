@@ -4,14 +4,18 @@ public class FileUpload {
 	String id;
 	String filename;
 	String uuid;
+	int count;
+	String url;
 	String uploadtime;
 	String uploaduser;
+	String type;
 	
 	public FileUpload(String filename, String uuid,
-			String uploaduser) {
+			String uploaduser, String type) {
 		this.filename = filename;
 		this.uuid = uuid;
 		this.uploaduser = uploaduser;
+		this.type = type;
 	}
 	
 	public FileUpload() {
@@ -36,6 +40,18 @@ public class FileUpload {
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
 	}
+	public int getCount() {
+		return count;
+	}
+	public void setCount(int count) {
+		this.count = count;
+	}
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
+	}
 	public String getUploadtime() {
 		return uploadtime;
 	}
@@ -48,5 +64,11 @@ public class FileUpload {
 	public void setUploaduser(String uploaduser) {
 		this.uploaduser = uploaduser;
 	}
-	
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+
 }

@@ -52,6 +52,7 @@ public class DeptDAOJDBC extends BaseDAOJDBC implements DeptDAO {
 	private String getDepid(){
 		UserDAO userDAO = DAOFactory.getInstance().getDAOImpl(UserDAO.class);
 		User user = new User();
+		//TODO hejie 
 		user.setId("hejie");
 		
 		return userDAO.getValue(user, "depid");

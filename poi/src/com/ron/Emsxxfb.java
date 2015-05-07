@@ -97,7 +97,7 @@ public class Emsxxfb extends HttpServlet {
             		String decrypt = "";
             		
 					try {
-						decrypt = REncrypt.aesDecrypt(encrypt, key);log.info(decrypt);
+						decrypt = REncrypt.aesDecrypt(encrypt, key);
 		                cooks = decrypt.split("==");   
 		                if (cooks.length == 2) {
 		                    username = cooks[0];  

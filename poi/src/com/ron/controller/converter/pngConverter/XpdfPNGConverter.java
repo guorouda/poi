@@ -13,8 +13,9 @@ public class XpdfPNGConverter {
     private File pdffile;
     
     // 转换器的存放位置，默认在c:xpdftestxpdf下面
-    private String CONVERTOR_STORED_PATH = "//opt//xpdfbin-linux-3.04//bin64//";
-//    private String CONVERTOR_STORED_PATH = "E:\\dev\\xpdfbin-win-3.04\\bin64\\";
+//    private String CONVERTOR_STORED_PATH = "//opt//xpdfbin-linux-3.04//bin64//";
+//    private String CONVERTOR_STORED_PATH = "d:\\xpdfbin-win-3.04\\bin64\\";
+    private String CONVERTOR_STORED_PATH = "e:\\dev\\xpdfbin-win-3.04\\bin64\\";
     
     // 转换器的名称，默认为pdftotext
     private String CONVERTOR_NAME = "pdftopng";

@@ -1,5 +1,7 @@
 package com.ron.exceptions;
 
+import org.apache.log4j.Logger;
+
 /**
  * This class represents a generic DAO exception. It should wrap any exception of the underlying
  * code, such as SQLExceptions.
@@ -9,6 +11,7 @@ package com.ron.exceptions;
  */
 public class DAOException extends RuntimeException {
 
+	public static Logger log = Logger.getLogger(DAOException.class);
     // Constants ----------------------------------------------------------------------------------
 
     private static final long serialVersionUID = 1L;
@@ -29,6 +32,7 @@ public class DAOException extends RuntimeException {
      */
     public DAOException(Throwable cause) {
         super(cause);
+        log.error("error: ", cause);
     }
 
     /**

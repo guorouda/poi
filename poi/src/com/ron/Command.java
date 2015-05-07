@@ -18,10 +18,6 @@ public abstract class Command {
 	protected HttpServletResponse resp;
 	protected String username;
 	
-	public abstract String list();
-	public abstract String list2();
-//	public abstract int myadd();
-//	public abstract String pr();
 	
 	public Object process(HttpServletRequest req, HttpServletResponse resp, String module, String action, String username){
 		this.req = req;
@@ -31,21 +27,30 @@ public abstract class Command {
 		Object object = null;
 		
 		try {
+			log.info(module + ":" + action);
 			object = this.getClass().getMethod(action, NO_ARGS_CLASS).invoke(this, NO_ARGS_OBJECT);
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			log.error("error: ", e);
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
+			log.error("error: ", e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			log.error("error: ", e);
 		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
+			log.error("error: ", e);
 		} catch (SecurityException e) {
-			e.printStackTrace();
+			log.error("error: ", e);
 		}
 		
 		return object;
 		
 	}
+	
+//	public abstract int myadd();
+//	public abstract String pr();
+	public abstract String list2();
 
+	public abstract String list();
+//	public abstract String delete();
+//	public abstract String create();
+	
 }
