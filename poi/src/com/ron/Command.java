@@ -1,9 +1,15 @@
 package com.ron;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 
@@ -43,6 +49,25 @@ public abstract class Command {
 		
 		return object;
 		
+	}
+	
+	public JSONObject TellFront(List list, String root){
+		
+        JSONArray ja = JSONArray.fromObject(list);
+        Map<String, Object> m = new HashMap<String, Object>();
+        m.put("success", true);
+        m.put("total", list.size());
+        m.put(root, ja);
+        m.put("message", " " + list.size() + " ");
+        
+        return JSONObject.fromObject(m);
+	}
+	
+	public JSONArray TellFront2(List list){
+		
+        JSONArray ja = JSONArray.fromObject(list);
+        
+        return  ja;
 	}
 	
 //	public abstract int myadd();

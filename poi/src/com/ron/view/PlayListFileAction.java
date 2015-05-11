@@ -107,19 +107,7 @@ public class PlayListFileAction extends Command {
         PlayListFileDAO playListFileDAO = DAOFactory.getInstance().getDAOImpl(PlayListFileDAO.class);
         List list = playListFileDAO.list();
         
-		return TellFront(list).toString();
-	}
-	
-	private JSONObject TellFront(List list){
-		
-        JSONArray ja = JSONArray.fromObject(list);
-        Map<String, Object> m = new HashMap<String, Object>();
-        m.put("success", true);
-        m.put("count", list.size());
-        m.put("user", ja);
-        m.put("message", " " + list.size() + " ");
-        
-        return JSONObject.fromObject(m);
+		return TellFront(list, "user").toString();
 	}
 	
 }

@@ -19,70 +19,30 @@
 		
 		
 		<script type="text/javascript" language="JavaScript">
-
-			var eLog = null;
-			var eCount = null;
-			var lOldSlide = 0;
-			var lCurSlide = 1;
-			var lMaxSlides = 22;
-			var lCientCount = 0;
-
-			function scrollLogToBottom() {
-				if( eLog.scrollHeight > eLog.clientHeight ) {
-					eLog.scrollTop = eLog.scrollHeight - eLog.clientHeight;
-				}
-			}
-
-			function log( aString ) {
-				eLog.innerHTML +=
-					aString + "<br>";
-				scrollLogToBottom();
-			}
-
-			function clearLog() {
-				eLog.innerHTML = "";
-				eLog.scrollTop = 0;
-			}
-
 			var lWSC = null;
 
 			function connect() {
 				var lURL = jws.getDefaultServerURL();
 
-				log( "Connecting to " + lURL + " ..." );
 				var lRes = lWSC.open( lURL, {
- 
-					// OnOpen callback
 					OnOpen: function( aEvent ) {
-						log( "<font style='color:#888'>jWebSocket connection established.</font>" );
 						jws.$("simgStatus").src = "images/connected.png";
 					},
 
-					// OnWelcome callback
 					OnWelcome: function( aEvent ) {
-						
 					},
 
-					// OnMessage callback
 					OnMessage: function( aEvent ) {
-						log( "<font style='color:#888'>jWebSocket message received: '" + aEvent.data + "'</font>" );
 						jws.$("simgStatus").src = "images/authenticated.png";
 
 						jws.$("slblClientId").innerHTML =
 							"&nbsp;Client&#x2011;Id:&nbsp;"
 							+ lWSC.getId() + "&nbsp;"
 							+ ( jws.browserSupportsNativeWebSockets ? "(native)" : "(flashbridge)" );
-							
-							
 					},
 
-					// OnMessage callback
 					OnToken: function( aToken ) {
-						// check if slide has to be updated
-						if( aToken.action == "slide") {
-							eSlide.src = "slides/Slide" + jws.tools.zerofill( aToken.slide, 4 ) + ".gif";
-						// check if new client connected and send the current for initialization
-						} else if( "event" == aToken.type
+						if( "event" == aToken.type
 							&& "connect" == aToken.name ) {
 							lCientCount = aToken.clientCount;
 							lWSC.sendToken({
@@ -111,28 +71,14 @@
 
 					// OnClose callback
 					OnClose: function( aEvent ) {
-						log( "<font style='color:#888'>jWebSocket connection closed.</font>" );
 						jws.$("simgStatus").src = "images/disconnected.png";
 						jws.$("slblClientId").innerHTML = "&nbsp;Client&#x2011;Id:&nbsp;-";
 					}
 
 				});
 
-				log( lWSC.resultToString( lRes ) );
 			}
 
-			function updateSlide(rows) {
-				if( lOldSlide != lCurSlide ) {
-					lWSC.broadcastToken({
-						action: "slide",
-						slide: lCurSlide,
-						senderIncluded: true,
-						responseRequested: false,
-						clientCount: lCientCount
-					});
-				}
-			}
-			
 			function my(rows) {
 				lWSC.broadcastToken({
 						action: "injection",
@@ -144,66 +90,19 @@
 				
 			}
 
-			function first() {
-				lCurSlide = 1;
-				updateSlide();
-			}
-
-			function prev() {
-				if( lCurSlide > 1 ) {
-					lCurSlide--;
-					updateSlide();
-				}
-			}
-
-			function next() {
-				if( lCurSlide < lMaxSlides ) {
-					lCurSlide++;
-					updateSlide();
-				}
-			}
-
-			function last() {
-				lCurSlide = lMaxSlides;
-				updateSlide();
-			}
-
-			function processKeyDown( aEvent ) {
-				// console.log( aEvent.keyCode );
-				if( aEvent.keyCode == 36 ) {
-					first();
-				} else if( aEvent.keyCode == 37 ) {
-					prev();
-				} else if( aEvent.keyCode == 39 ) {
-					next();
-				} else if( aEvent.keyCode == 35 ) {
-					last();
-				}
-			}
-
 			function disconnect() {
 				if( lWSC ) {
-					log( "Disconnecting..." );
 					var lRes = lWSC.close({ timeout: 3000 });
-					log( lWSC.resultToString( lRes ) );
 				}
 			}
 
 			function initPage() {
-				eLog = jws.$( "sdivLog" );
-				eSlide = jws.$( "simgSlide" );
-				eCount = jws.$( "slblCount" );
-
 				if( jws.browserSupportsWebSockets() ) {
 					lWSC = new jws.jWebSocketJSONClient();
 				} else {
 					var lMsg = jws.MSG_WS_NOT_SUPPORTED;
-					alert( lMsg );
-					log( lMsg );
 				}
-
 				connect();
-				jws.events.addEventListener( document.body, "keydown", processKeyDown );
 			}
 
 			function exitPage() {
@@ -228,9 +127,19 @@
 				<td class="tdHeader" width="1%"><span id="slblClientId">&nbsp;Client&#x2011;Id:&nbsp;-</span></td>
 			</tr>
 		</table>		
-	<div style="margin:20px 0;">
-		<a href="#" class="easyui-linkbutton" onclick="getSelected()">插播</a>
-		<a href="#" class="easyui-linkbutton" onclick="getPlaylist()">reload playlist</a>
+	<div style="margin:10px 0;">
+			<a href="#" class="easyui-linkbutton" onclick="getPlaylist()">reload playlist</a>
+			<span>Selection Mode: </span>
+			<input class="easyui-combobox" 
+				name="language"
+				data-options="
+					url:'/poi/CityListAction.do?action=list',
+					method:'get',
+					valueField:'id',
+					textField:'name',
+					panelHeight:'auto'
+			">
+			<a href="#" class="easyui-linkbutton" onclick="getSelected()">插播</a>
 	</div>
 	<table id="dg" class="easyui-datagrid" title="插播列表" style="width:700px;height:250px"
 			data-options="singleSelect:true,url:'',method:'get'">
@@ -246,17 +155,6 @@
 			</tr>
 		</thead>
 	</table>
-	<img id="simgSlide" src=""/>
-	<div id="sdivLog" class="sdivContainer" style="display:none"
-		 style="position:relative; height:100px; overflow:auto;">
-	</div>
-<!--<div style="margin:10px 0;">
-		<span>Selection Mode: </span>
-		<select onchange="$('#dg').datagrid({singleSelect:(this.value==0)})">
-			<option value="0">Single Row</option>
-			<option value="1">Multiple Rows</option>
-		</select>
-</div>-->
 	<script type="text/javascript">
 		function getSelected(){
 			var row = $('#dg').datagrid('getSelected');
@@ -269,8 +167,6 @@
 			$('#dg').datagrid({
 				url:'/poi/FileUploadAction.do?action=list'
 			});
-			
-			$.messager.alert('Info', ss.join('<br/>'));
 		}
 	</script>
 		

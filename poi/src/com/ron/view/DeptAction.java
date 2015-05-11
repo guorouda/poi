@@ -13,7 +13,7 @@ public class DeptAction extends Command {
 		String node = req.getParameter("node");
         DeptDAO deptDAO = DAOFactory.getInstance().getDAOImpl(DeptDAO.class);
         String s = deptDAO.getChildren(node);
-        System.out.println(s);
+        
 		return s;
 	}
 
@@ -30,7 +30,6 @@ public class DeptAction extends Command {
 
 	@Override
 	public String list2() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

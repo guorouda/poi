@@ -18,7 +18,7 @@ import com.ron.model.PlayListFile;
 public class PlayListFileDAOJDBC extends BaseDAOJDBC implements PlayListFileDAO {
 	public static Logger log = Logger.getLogger(PlayListFileDAOJDBC.class);
 
-	private static final String SQL_INSERT_PLAYLISTFILE = "insert into xxfb_playlistfile (id, listid, seq, filename, uuid, type) values (playlistfile_id_seq.nextval, ?, ?, ?, ?, ?)";
+	private static final String SQL_INSERT_PLAYLISTFILE = "insert into xxfb_playlistfile (id, listid, seq, filename, uuid, type, duration) values (playlistfile_id_seq.nextval, ?, ?, ?, ?, ?, ?)";
 	private static final String SQL_LIST_ORDER_BY_ID = "select * from xxfb_playlistfile t where t.listid = ? order by t.seq";
 	private static final String SQL_DELETE_PLAYLISTFILE = "delete xxfb_playlistfile t where t.id = ?";
 	
@@ -35,7 +35,7 @@ public class PlayListFileDAOJDBC extends BaseDAOJDBC implements PlayListFileDAO 
             int i = 0;
             for(PlayListFile p:list){
         	    Object[] values = {
-        	    		p.getListid(), list.size() - i, p.getFilename(), p.getUuid(), p.getType()
+        	    		p.getListid(), list.size() - i, p.getFilename(), p.getUuid(), p.getType(), p.getDuration()
         	    };
         	    setValues(preparedStatement, values);
                 preparedStatement.addBatch();
@@ -62,7 +62,7 @@ public class PlayListFileDAOJDBC extends BaseDAOJDBC implements PlayListFileDAO 
             preparedStatement = connection.prepareStatement(SQL_DELETE_PLAYLISTFILE);
             for(PlayListFile p:list){
         	    Object[] values = {
-        	    		p.getUuid()
+        	    		p.getId()
         	    };
         	    setValues(preparedStatement, values);
                 preparedStatement.addBatch();

@@ -84,7 +84,7 @@ public class Emsxxfb extends HttpServlet {
 		return (Command)Class.forName("com.ron.view."+ module).newInstance();
 	}
 	
-	private String authen(HttpServletRequest req){
+	public static String authen(HttpServletRequest req){
         Cookie[] cookies = req.getCookies();  
         String[] cooks = null;   
         String username = "";   

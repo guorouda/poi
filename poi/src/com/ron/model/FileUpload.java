@@ -9,13 +9,15 @@ public class FileUpload {
 	String uploadtime;
 	String uploaduser;
 	String type;
+	long duration;
 	
 	public FileUpload(String filename, String uuid,
-			String uploaduser, String type) {
+			String uploaduser, String type, long duration) {
 		this.filename = filename;
 		this.uuid = uuid;
 		this.uploaduser = uploaduser;
 		this.type = type;
+		this.duration = duration;
 	}
 	
 	public FileUpload() {
@@ -69,6 +71,12 @@ public class FileUpload {
 	}
 	public void setType(String type) {
 		this.type = type;
+	}
+	public long getDuration() {
+		return duration;
+	}
+	public void setDuration(long duration) {
+		this.duration = duration;
 	}
 
 }

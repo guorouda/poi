@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ron.Emsxxfb;
 import com.ron.controller.converter.pdfConverter.JacobPDFConverter;
 import com.ron.controller.converter.pdfConverter.OpenOfficePDFConverter;
 import com.ron.controller.converter.pdfConverter.PDFConverter;
@@ -33,6 +37,7 @@ import com.ron.model.FileUpload;
 import com.ron.model.FileUploadBean;
 import com.ron.pereference.SystemGlobals;
 import com.ron.utils.FileUtils;
+import com.ron.utils.ReadVideo;
 
 /**
  * Controller - Spring
@@ -48,9 +53,12 @@ public class FileUploadController {
 	public static Logger log = Logger.getLogger(FileUploadController.class);
 
 	@RequestMapping(method = RequestMethod.POST)
-	public @ResponseBody String create(FileUploadBean uploadItem, BindingResult result){
+	public @ResponseBody String create(HttpServletRequest req, FileUploadBean uploadItem, BindingResult result){
+		String username = Emsxxfb.authen(req);
 
 		String results = "";
+		long time = 5000;
+		
 		ExtJSFormResult extjsFormResult = new ExtJSFormResult();
 		
 		if (result.hasErrors()){
@@ -100,17 +108,27 @@ public class FileUploadController {
 				p.waitFor();
 				
 				ContainerDAO containerDAO = DAOFactory.getInstance().getDAOImpl(ContainerDAO.class);
-				List<Container> list = FileList(pngDir); 
+				List<Container> list = fileList(pngDir); 
 				for(Container c:list){
 					Container container = new Container(c.getFilename(),c.getUuid(), c.getDuration());
 					containerDAO.create(container);
 				}
 				
-				results = TellFront(containerDAO.find(uuid)).toString();
+				results = tellFront(containerDAO.find(uuid)).toString();
 				type = "IMGS";
 			}
 			
-			FileUpload fileUpload = new FileUpload(filename, uuid, "username", type);
+			if(type.equals("VIDEO")){
+				time = ReadVideo.getTime(filepath);
+				if(time == 0) {
+					type = "None";
+				}
+			}
+			if(type.equals("IMGS")){
+				time = 0;
+			}
+			
+			FileUpload fileUpload = new FileUpload(filename, uuid, username, type, time);
 			FileUploadDAO fileUploadDAO = DAOFactory.getInstance().getDAOImpl(FileUploadDAO.class);
 			fileUploadDAO.create(fileUpload);
 			
@@ -134,7 +152,7 @@ public class FileUploadController {
 		return results;
 	}
 	
-	private List<Container> FileList(String pngDir){
+	public static List<Container> fileList(String pngDir){
         List<Container> list = new ArrayList<Container>();
         
         File file = new File(pngDir);  
@@ -151,10 +169,9 @@ public class FileUploadController {
         }
         
         return list;
-	
 	}
 	
-	private JSONObject TellFront(List list){
+	private JSONObject tellFront(List list){
 		
         JSONArray ja = JSONArray.fromObject(list);
         Map<String, Object> m = new HashMap<String, Object>();

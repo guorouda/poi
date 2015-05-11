@@ -14,7 +14,7 @@ public class MenuAction extends Command {
 		log.info("username: " + username);
         MenuDAO menuDAO = DAOFactory.getInstance().getDAOImpl(MenuDAO.class);
         String s = menuDAO.getMenu(node, username);
-        System.out.println(s);
+        
 		return s;
 	}
 
