@@ -15,4 +15,9 @@ public class ContainerAction extends Command {
 		return "{\"count\":\"1\", \"user\":[{\"filename\":\"sara_pink.jpg\",\"duration\":\"2154\",\"id\":\"1407243286000\",\"uuid\":\"2222222222222222\"}]}";
 	}
 	
+	public String update(){
+		
+		return "";
+	}
+	
 }

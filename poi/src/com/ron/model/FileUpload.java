@@ -3,6 +3,7 @@ package com.ron.model;
 public class FileUpload {
 	String id;
 	String filename;
+	String shortFilename;
 	String uuid;
 	int count;
 	String url;
@@ -35,6 +36,12 @@ public class FileUpload {
 	}
 	public void setFilename(String filename) {
 		this.filename = filename;
+	}
+	public String getShortFilename() {
+		return shortFilename;
+	}
+	public void setShortFilename(String shortFilename) {
+		this.shortFilename = shortFilename;
 	}
 	public String getUuid() {
 		return uuid;

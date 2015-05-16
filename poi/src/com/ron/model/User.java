@@ -8,6 +8,15 @@ public class User {
 	String right;
 	String inuse;
 	
+	
+	public User(String id) {
+		this.id = id;
+	}
+	
+	public User() {
+	}
+
+
 	public String getId() {
 		return id;
 	}

@@ -2,11 +2,16 @@ package com.ron.controller.converter.pdfConverter;
 
 import java.io.File;
 
+import org.apache.log4j.Logger;
+
 import com.jacob.activeX.ActiveXComponent;
 import com.jacob.com.Dispatch;
 import com.ron.utils.FileUtils;
 
 public class JacobPDFConverter implements PDFConverter {
+	
+	public static Logger log = Logger.getLogger(JacobPDFConverter.class);
+	
 	private static final int wdFormatPDF = 17;
 	private static final int xlTypePDF = 0;
 	private static final int ppSaveAsPDF = 32;
@@ -95,7 +100,8 @@ public class JacobPDFConverter implements PDFConverter {
 		
 	}
 	public static void ppt2PDF(String inputFile,String pdfFile){
-		
+		System.out.println(System.getProperty("java.library.path"));
+		log.info(System.getProperty("java.library.path"));
 		ActiveXComponent app = new ActiveXComponent("PowerPoint.Application");
 		//app.setProperty("Visible", msofalse);
 		Dispatch ppts = app.getProperty("Presentations").toDispatch();

@@ -1,16 +1,7 @@
 package com.ron.view;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -34,7 +25,7 @@ public class PickFileAction extends Command{
 	public static Logger log = Logger.getLogger(PickFileAction.class);
 	
 	public static void fileList(){
-		fileList("l:\\1"); 
+		fileList("C:\\inetpub\\ftproot"); 
 	}
 	
 	private static void fileList(String filePath){
@@ -54,7 +45,7 @@ public class PickFileAction extends Command{
                	
                	String targetPath = SystemGlobals.getDefaultsValue("application.path") + File.separator + "download" + File.separator + "temp" + File.separator + uuid + "." + extension;
                	log.info(targetPath);
-               	File targetFile = new File(targetPath);
+//               	File targetFile = new File(targetPath);
                	
                	File newDirectory =  new File(SystemGlobals.getDefaultsValue("application.path") + File.separator + "download" + File.separator + "temp");
                	String newName =  uuid + "." + extension;
@@ -62,6 +53,7 @@ public class PickFileAction extends Command{
                	
                	String isimg = "";
 				try {
+					targetPath = SystemGlobals.getDefaultsValue("application.path") + File.separator + "download" + File.separator + "temp" + File.separator + newName;
 					isimg = FileUtils.ImageTypeCheck(targetPath);
 	    			if(isimg.equals("8950") || isimg.equals("ffd8") || isimg.equals("4749") || isimg.equals("424d")){
 	    				extension = "img";

@@ -45,12 +45,17 @@ public class CityDAOJDBC extends BaseDAOJDBC implements CityDAO {
 
         return p;
 	}
-
+	
     private static City map(ResultSet resultSet) throws SQLException {
         City city = new City();
 
         city.setId(resultSet.getInt("id"));
         city.setName(resultSet.getString("name"));
+        city.setIpAddress(resultSet.getString("ipaddress"));
+        city.setPort(resultSet.getInt("port"));
+        city.setUsername(resultSet.getString("username"));
+        city.setPassword(resultSet.getString("password"));
+        city.setFtppath(resultSet.getString("ftppath"));
         
         return city;
     }

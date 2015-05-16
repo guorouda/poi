@@ -21,6 +21,11 @@ public class FileUtils {
         return fileName.substring(splitIndex + 1);
 	}
 	
+	public static String getFileExtension(String fileName){
+		int splitIndex = fileName.lastIndexOf(".");
+		return fileName.substring(splitIndex + 1, fileName.length()); 
+	}
+	
 	public static void copyFile(String inputFile,String outputFile) throws FileNotFoundException{
 		File sFile = new File(inputFile);
 		File tFile = new File(outputFile);

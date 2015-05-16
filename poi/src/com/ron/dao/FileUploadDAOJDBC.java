@@ -10,14 +10,19 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.ron.exceptions.DAOException;
 import com.ron.model.FileUpload;
+import com.ron.pereference.SystemGlobals;
+import com.ron.utils.FileUtils;
 
 public class FileUploadDAOJDBC extends BaseDAOJDBC implements FileUploadDAO {
 
     private static final String SQL_INSERT = "INSERT INTO xxfb_fileupload (id, filename, uuid, uploadtime, uploaduser, type, duration) VALUES (fileupload_id_seq.nextval, ?, ?, sysdate, ?, ?, ?)";
 	private static final String SQL_LIST_ORDER_BY_ID = "select t.uuid, t.filename, t.type, t.duration, count(b.filename) count from xxfb_fileupload t, xxfb_container b where t.uuid = b.uuid(+) group by t.uuid, t.filename, t.type, t.duration";
-
+	
+	public static Logger log = Logger.getLogger(FileUploadDAOJDBC.class);
 
 	@Override
 	public void create(FileUpload fileupload) throws IllegalArgumentException,
@@ -25,7 +30,7 @@ public class FileUploadDAOJDBC extends BaseDAOJDBC implements FileUploadDAO {
 	
 	    if (fileupload.getId() != null) {
 	        throw new IllegalArgumentException(
-	                "User is already created, the user ID is not null.");
+	                "fileupload is already created, the user ID is not null.");
 	    }
 	
 	    Object[] values = {
@@ -86,20 +91,24 @@ public class FileUploadDAOJDBC extends BaseDAOJDBC implements FileUploadDAO {
     private static FileUpload map(ResultSet resultSet) throws SQLException {
         FileUpload fileUpload = new FileUpload();
         String filename = resultSet.getString("filename");
+        String shortFilename = filename.substring(0, FileUtils.getFilePrefix(filename).length() > 4 ? 4 : FileUtils.getFilePrefix(filename).length()) + ".." + FileUtils.getFileExtension(filename);
+//        log.info(shortFilename + ":" + FileUtils.getFilePrefix(filename).length() + ":" + filename + ":" + FileUtils.getFilePrefix(filename));
         String uuid = resultSet.getString("uuid");
         String type = resultSet.getString("type");
         int count = resultSet.getInt("count");
         String url = "";
 
         fileUpload.setFilename(filename);
+        fileUpload.setShortFilename(shortFilename);
         fileUpload.setUuid(resultSet.getString("uuid"));
         fileUpload.setCount(count);
+        url = SystemGlobals.getDefaultsValue("srcPath");
         if(type.equalsIgnoreCase("video")){
-        	url = "/poi/download/temp/video.png";
+        	url += "video.png";
         }else if(type.equalsIgnoreCase("imgs")){
-        	url = "/poi/download/temp/" + uuid + "/image-000001.png";
+        	url += "image-000001.png";
         }else{
-        	url = "/poi/download/temp/" + uuid + filename.substring(filename.lastIndexOf("."), filename.length());
+        	url += uuid + filename.substring(filename.lastIndexOf("."), filename.length());
         }
         fileUpload.setUrl(url);
         fileUpload.setType(resultSet.getString("type"));

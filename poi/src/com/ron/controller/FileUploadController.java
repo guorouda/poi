@@ -28,13 +28,17 @@ import com.ron.controller.converter.pdfConverter.JacobPDFConverter;
 import com.ron.controller.converter.pdfConverter.OpenOfficePDFConverter;
 import com.ron.controller.converter.pdfConverter.PDFConverter;
 import com.ron.controller.converter.pngConverter.XpdfPNGConverter;
+import com.ron.dao.CityDAO;
 import com.ron.dao.ContainerDAO;
 import com.ron.dao.DAOFactory;
 import com.ron.dao.FileUploadDAO;
+import com.ron.dao.UserDAO;
+import com.ron.model.City;
 import com.ron.model.Container;
 import com.ron.model.ExtJSFormResult;
 import com.ron.model.FileUpload;
 import com.ron.model.FileUploadBean;
+import com.ron.model.User;
 import com.ron.pereference.SystemGlobals;
 import com.ron.utils.FileUtils;
 import com.ron.utils.ReadVideo;
@@ -54,11 +58,19 @@ public class FileUploadController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public @ResponseBody String create(HttpServletRequest req, FileUploadBean uploadItem, BindingResult result){
-		String username = Emsxxfb.authen(req);
-
 		String results = "";
-		long time = 5000;
 		
+		String username = Emsxxfb.authen(req);
+		if(username.equals("")){
+			return 	"{\"message\":\"上传文件失败，用户未登录或超时，请重新登录\", \"success\":\"false\"}";
+		}
+		
+        UserDAO userDAO = DAOFactory.getInstance().getDAOImpl(UserDAO.class);
+        User user = new User(username);
+        String right = userDAO.getValue(user, "right");
+        
+
+		long time = 5000;
 		ExtJSFormResult extjsFormResult = new ExtJSFormResult();
 		
 		if (result.hasErrors()){
@@ -71,7 +83,7 @@ public class FileUploadController {
 			
 			return extjsFormResult.toString();
 		}
-
+	
 		// Some type of file processing...
 		try {
 			String appPath = SystemGlobals.getDefaultsValue("application.path");
@@ -80,11 +92,20 @@ public class FileUploadController {
 			String type = "VIDEO";
 			
 			String uuid = UUID.randomUUID().toString();
-			log.info(uuid);
 			String filepath = appPath + File.separator + "download" + File.separator + "temp" + File.separator + uuid + "." + extension;
 			File file = new File(filepath);
 			uploadItem.getFile().transferTo(file);
-			
+				
+	        if(Integer.parseInt(right) >= 10){
+	        	//transfer file to  city
+	        	List<City> list = getCityAll();
+	        	for(City city:list){
+	        		new Thread(new MyTransferFile(city.getUsername(), city.getPassword(), city.getIpAddress(), city.getPort(), filepath)).start();
+	        	}
+	        	return "";
+	        	
+	        }
+				
 			String isimg = FileUtils.ImageTypeCheck(filepath);
 			if(isimg.equals("8950") || isimg.equals("ffd8") || isimg.equals("4749") || isimg.equals("424d")){
 				results = "{\"message\":\"成功上传文件\", \"success\":\"true\", \"count\":1, \"user\":[{\"duration\":5000,\"filename\":\"" + uuid + "." + extension + "\",\"id\":\"2678\",\"uuid\":\"\"}]}";
@@ -97,12 +118,32 @@ public class FileUploadController {
 //				PDFConverter pdfConverter = new OpenOfficePDFConverter();
 //				pdfConverter.convert2PDF(filepath);
 				String pdfFile = FileUtils.getFilePrefix(filepath)+".pdf";
+				log.info(pdfFile);
 				JacobPDFConverter.ppt2PDF(filepath, pdfFile);
+				extension = "pdf";
+			}
+			
+			if(extension.equalsIgnoreCase("doc") || extension.equalsIgnoreCase("docx")){
+//				PDFConverter pdfConverter = new OpenOfficePDFConverter();
+//				pdfConverter.convert2PDF(filepath);
+				String pdfFile = FileUtils.getFilePrefix(filepath)+".pdf";
+				log.info(pdfFile);
+				JacobPDFConverter.word2PDF(filepath, pdfFile);
+				extension = "pdf";
+			}		
+			
+			if(extension.equalsIgnoreCase("xls") || extension.equalsIgnoreCase("xlsx")){
+//				PDFConverter pdfConverter = new OpenOfficePDFConverter();
+//				pdfConverter.convert2PDF(filepath);
+				String pdfFile = FileUtils.getFilePrefix(filepath)+".pdf";
+				log.info(pdfFile);
+				JacobPDFConverter.excel2PDF(filepath, pdfFile);
 				extension = "pdf";
 			}
 			
 			if(extension.equals("pdf")){
 				XpdfPNGConverter xpdf = new XpdfPNGConverter(FileUtils.getFilePrefix(filepath)+".pdf");
+				xpdf.setCONVERTOR_STORED_PATH(SystemGlobals.getDefaultsValue("xpdfPath"));
 				String pngDir = FileUtils.getFilePrefix(filepath);
 				Process p = xpdf.toPNG(pngDir);
 				p.waitFor();
@@ -147,8 +188,10 @@ public class FileUploadController {
 		
 		//set extjs return - sucsess
 		extjsFormResult.setSuccess(true);
-		
+        
+        
 //		return extjsFormResult.toString();
+		
 		return results;
 	}
 	
@@ -162,7 +205,8 @@ public class FileUploadController {
                 String name = files[i].getName();  
                 if (name.trim().toLowerCase().endsWith(".png")) {  
                 	String uuid = pngDir.substring(pngDir.lastIndexOf("\\") + 1, pngDir.length());
-                	Container container = new Container(name, uuid, 5000);
+                	Container container = new Container(name, uuid, Integer.parseInt(SystemGlobals.getDefaultsValue("duration")));
+                	
                     list.add(container);
                 }  
             }  
@@ -176,11 +220,20 @@ public class FileUploadController {
         JSONArray ja = JSONArray.fromObject(list);
         Map<String, Object> m = new HashMap<String, Object>();
         m.put("success", true);
+        m.put("path", SystemGlobals.getDefaultsValue("srcPath"));
         m.put("count", list.size());
         m.put("user", ja);
         m.put("message", " " + list.size() + " ");
         
         return JSONObject.fromObject(m);
+	}
+	
+	public List<City> getCityAll(){
+		List<City> list = new ArrayList<City>();
+        CityDAO cityDAO = DAOFactory.getInstance().getDAOImpl(CityDAO.class);
+        list = cityDAO.list();
+		
+		return list;
 	}
 
 }
