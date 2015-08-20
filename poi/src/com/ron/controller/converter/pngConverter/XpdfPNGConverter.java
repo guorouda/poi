@@ -13,9 +13,7 @@ public class XpdfPNGConverter {
     private File pdffile;
     
     // 转换器的存放位置，默认在c:xpdftestxpdf下面
-//    private String CONVERTOR_STORED_PATH = "//opt//xpdfbin-linux-3.04//bin64//";
-//    private String CONVERTOR_STORED_PATH = "d:\\xpdfbin-win-3.04\\bin64\\";
-    private String CONVERTOR_STORED_PATH = "e:\\dev\\xpdfbin-win-3.04\\bin64\\";
+    private String CONVERTOR_STORED_PATH = "";
     
     // 转换器的名称，默认为pdftotext
     private String CONVERTOR_NAME = "pdftopng";
@@ -36,7 +34,6 @@ public class XpdfPNGConverter {
         File destinationFile = new File(targetfile);
         if (!destinationFile.exists()) {
             destinationFile.mkdir();
-            log.info("Folder Created -> "+ destinationFile.getAbsolutePath());
         }
         
         String[] cmd = getCmd(new File(targetfile + File.separator + "image"), isLayout);

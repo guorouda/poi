@@ -14,6 +14,6 @@ public interface PlayListFileDAO extends BaseDAO {
 	public void destroy(List<PlayListFile> list) throws IllegalArgumentException,
 			DAOException;
 	
-	public List<PlayListFile> list() throws DAOException;
+	public List<PlayListFile> list(String username) throws DAOException;
 
 }

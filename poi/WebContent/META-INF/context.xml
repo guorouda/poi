@@ -3,8 +3,8 @@
     <Resource
         name="jdbc/javabase" type="javax.sql.DataSource"
         maxActive="100" maxIdle="30" maxWait="10000" 
-        url="jdbc:oracle:thin:@192.168.202.11:1521:ORCL"
+        url="jdbc:oracle:thin:@192.168.202.13:1521:emsdb"
         driverClassName="oracle.jdbc.driver.OracleDriver"
-        username="ems" password="ems1609"
+        username="xxfb" password="ems"
     />
 </Context>

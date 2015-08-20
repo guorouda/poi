@@ -5,9 +5,10 @@ public class Container {
 	String id; 
 	String filename;
 	String uuid;
-	int duration;
+	long duration;
+	String path;
 	
-	public Container(String filename, String uuid, int duration) {
+	public Container(String filename, String uuid, long duration) {
 		this.filename = filename;
 		this.uuid = uuid;
 		this.duration = duration;
@@ -35,12 +36,17 @@ public class Container {
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
 	}
-	public int getDuration() {
+	public long getDuration() {
 		return duration;
 	}
-	public void setDuration(int duration) {
+	public void setDuration(long duration) {
 		this.duration = duration;
 	}
-	
+	public String getPath() {
+		return path;
+	}
+	public void setPath(String path) {
+		this.path = path;
+	}
 	
 }

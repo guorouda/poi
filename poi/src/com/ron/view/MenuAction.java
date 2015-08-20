@@ -8,33 +8,12 @@ import com.ron.model.User;
 
 public class MenuAction extends Command {
 
-	@Override
 	public String list() {
 		String node = req.getParameter("node");
-		log.info("username: " + username);
         MenuDAO menuDAO = DAOFactory.getInstance().getDAOImpl(MenuDAO.class);
         String s = menuDAO.getMenu(node, username);
         
 		return s;
 	}
-
-	public int myadd() {
-		int i = Integer.parseInt(req.getParameter("i"));
-		int j = Integer.parseInt(req.getParameter("j"));
-		return i + j;
-	}
-	
-	public String pr(){
-		String s = req.getParameter("s");
-		return s;
-	}
-
-	@Override
-	public String list2() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	
 
 }

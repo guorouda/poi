@@ -57,7 +57,7 @@ public class DAOTest {
         User user = new User();
         user.setName("foo@bar.com");
         user.setPassword("password");
-        userDAO.create(user);
+//        userDAO.create(user);
         System.out.println("User successfully created: " + user);
 
         // Create another user.
@@ -67,7 +67,7 @@ public class DAOTest {
         anotherUser.setDepid("Bar");
         anotherUser.setRight("Foo");
         anotherUser.setInuse("1");
-        userDAO.create(anotherUser);
+//        userDAO.create(anotherUser);
         System.out.println("Another user successfully created: " + anotherUser);
 //
 //        // Update user.
@@ -129,7 +129,7 @@ public class DAOTest {
         User user = new User();
         user.setName("foo@bar.com");
         user.setPassword("password");
-        userDAO.create(user);
+//        userDAO.create(user);
         System.out.println("User successfully created: " + user);
 
         // Create another user.
@@ -139,7 +139,7 @@ public class DAOTest {
         anotherUser.setDepid("Bar");
         anotherUser.setRight("Foo");
         anotherUser.setInuse("1");
-        userDAO.create(anotherUser);
+//        userDAO.create(anotherUser);
         System.out.println("Another user successfully created: " + anotherUser);
 
         // Update user.

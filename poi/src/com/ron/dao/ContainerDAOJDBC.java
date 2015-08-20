@@ -2,6 +2,7 @@ package com.ron.dao;
 
 import static com.ron.dao.DAOUtil.close;
 import static com.ron.dao.DAOUtil.prepareStatement;
+import static com.ron.dao.DAOUtil.setValues;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,6 +20,7 @@ public class ContainerDAOJDBC extends BaseDAOJDBC implements ContainerDAO {
 	
 	private static final String SQL_INSERT = "INSERT INTO xxfb_container (id, filename, uuid, duration) VALUES (container_id_seq.nextval, ?, ?, ?)";
 	private static final String SQL_LIST_CONTAINER_BY_UUID = "select * from xxfb_container t where t.uuid = ?";
+	private static final String SQL_UPDATE_BY_ID = "update xxfb_container set duration = ? where id = ?";
 	
 	public static Logger log = Logger.getLogger(ContainerDAOJDBC.class);
 	
@@ -101,5 +103,32 @@ public class ContainerDAOJDBC extends BaseDAOJDBC implements ContainerDAO {
         container.setDuration(resultSet.getInt("duration"));
         return container;
     }
+
+	@Override
+	public void update(List<Container> list) throws IllegalArgumentException,
+			DAOException {
+		
+		   	Connection connection = null;
+	        PreparedStatement preparedStatement = null;
+	        ResultSet resultSet = null;
+
+	        try {
+	            connection = daoFactory.getConnection();
+	            preparedStatement = connection.prepareStatement(SQL_UPDATE_BY_ID);
+	            for(Container c:list){
+	        	    Object[] values = {
+	        	    		c.getDuration(), c.getId()
+	        	    };
+	        	    setValues(preparedStatement, values);
+	                preparedStatement.addBatch();
+	            }
+	            preparedStatement.executeBatch();
+	        } catch (SQLException e) {
+	            throw new DAOException(e);
+	        } finally {
+	            close(connection, preparedStatement, resultSet);
+	        }
+		
+	}
 
 }

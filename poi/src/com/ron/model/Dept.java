@@ -2,30 +2,30 @@ package com.ron.model;
 
 
 public class Dept {
-	String id;
-	String text;
+	String orgcode;
+	String uporgcode;
+	String orgjc;
 	String cls;
 	String qtip;
 	boolean leaf;
 	
-	public Dept(String id, String text, String cls, boolean leaf) {
-		super();
-		this.id = id;
-		this.text = text;
-		this.cls = cls;
-		this.leaf = leaf;
+	public String getOrgcode() {
+		return orgcode;
 	}
-	public String getId() {
-		return id;
+	public void setOrgcode(String orgcode) {
+		this.orgcode = orgcode;
 	}
-	public void setId(String id) {
-		this.id = id;
+	public String getUporgcode() {
+		return uporgcode;
 	}
-	public String getText() {
-		return text;
+	public void setUporgcode(String uporgcode) {
+		this.uporgcode = uporgcode;
 	}
-	public void setText(String text) {
-		this.text = text;
+	public String getOrgjc() {
+		return orgjc;
+	}
+	public void setOrgjc(String orgjc) {
+		this.orgjc = orgjc;
 	}
 	public String getCls() {
 		return cls;
@@ -33,18 +33,17 @@ public class Dept {
 	public void setCls(String cls) {
 		this.cls = cls;
 	}
+	public String getQtip() {
+		return qtip;
+	}
+	public void setQtip(String qtip) {
+		this.qtip = qtip;
+	}
 	public boolean isLeaf() {
 		return leaf;
 	}
 	public void setLeaf(boolean leaf) {
 		this.leaf = leaf;
 	}
-	
-	@Override
-	public String toString() {
-		return super.toString();
-	}
-	
-	
 	
 }

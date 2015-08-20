@@ -45,11 +45,11 @@ public interface UserDAO extends BaseDAO{
     /**
      * Create the given user in the database. The user ID must be null, otherwise it will throw
      * IllegalArgumentException. After creating, the DAO will set the obtained ID in the given user.
-     * @param user The user to be created in the database.
+     * @param list The user to be created in the database.
      * @throws IllegalArgumentException If the user ID is not null.
      * @throws DAOException If something fails at database level.
      */
-    public void create(User user) throws IllegalArgumentException, DAOException;
+    public boolean create(List<User> list) throws IllegalArgumentException, DAOException;
 
     /**
      * Update the given user in the database. The user ID must not be null, otherwise it will throw
@@ -67,6 +67,8 @@ public interface UserDAO extends BaseDAO{
      * @throws DAOException If something fails at database level.
      */
     public void delete(User user) throws DAOException;
+    
+    public boolean destroy(List<User> list) throws DAOException;
 
     /**
      * Returns true if the given email address exist in the database.
@@ -88,5 +90,7 @@ public interface UserDAO extends BaseDAO{
     public String login(String username, String password) throws DAOException;
     
     public String getValue(User user, String key) throws DAOException;
+
+	public abstract List<User> getUserByDepid(String depid) throws DAOException;
 
 }

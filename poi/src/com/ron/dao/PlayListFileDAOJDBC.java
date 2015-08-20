@@ -77,9 +77,9 @@ public class PlayListFileDAOJDBC extends BaseDAOJDBC implements PlayListFileDAO 
 	}
 
 	  @Override
-	    public List<PlayListFile> list() throws DAOException {
+	    public List<PlayListFile> list(String username) throws DAOException {
 	  	    Object[] values = {
-	  	    		1
+	  	    	username	
 		    };
 	  	    
 	        Connection connection = null;

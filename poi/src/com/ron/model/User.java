@@ -1,6 +1,7 @@
 package com.ron.model;
 
 public class User {
+	String userid;
 	String id;
 	String name;
 	String password;
@@ -8,6 +9,20 @@ public class User {
 	String right;
 	String inuse;
 	
+	public User(String id, String name, String depid, String right, String inuse) {
+		this.id = id;
+		this.name = name;
+		this.depid = depid;
+		this.right = right;
+		this.inuse = inuse;
+	}
+	
+	public User(String userid, String name, String depid, String right) {
+		this.userid = userid;
+		this.name = name;
+		this.depid = depid;
+		this.right = right;
+	}
 	
 	public User(String id) {
 		this.id = id;
@@ -16,7 +31,12 @@ public class User {
 	public User() {
 	}
 
-
+	public String getUserid() {
+		return userid;
+	}
+	public void setUserid(String userid) {
+		this.userid = userid;
+	}
 	public String getId() {
 		return id;
 	}

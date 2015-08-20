@@ -38,10 +38,15 @@ public final class DAOUtil {
         (Connection connection, String sql, boolean returnGeneratedKeys, Object... values)
             throws SQLException
     {
-    	String generatedColumns[] = { "ID" };
 //        PreparedStatement preparedStatement = connection.prepareStatement(sql, returnGeneratedKeys ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS);
 //        PreparedStatement preparedStatement = connection.prepareStatement(sql, returnGeneratedKeys ? generatedColumns : Statement.NO_GENERATED_KEYS);
-        PreparedStatement preparedStatement = connection.prepareStatement(sql, generatedColumns);
+    	PreparedStatement preparedStatement = null;
+    	if(returnGeneratedKeys){
+    		String generatedColumns[] = { "ID" };
+    		preparedStatement = connection.prepareStatement(sql, generatedColumns);
+    	}else{
+    		preparedStatement = connection.prepareStatement(sql);
+    	}
         setValues(preparedStatement, values);
         return preparedStatement;
     }

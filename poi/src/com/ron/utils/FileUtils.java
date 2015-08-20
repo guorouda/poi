@@ -23,7 +23,7 @@ public class FileUtils {
 	
 	public static String getFileExtension(String fileName){
 		int splitIndex = fileName.lastIndexOf(".");
-		return fileName.substring(splitIndex + 1, fileName.length()); 
+		return fileName.substring(splitIndex + 1); 
 	}
 	
 	public static void copyFile(String inputFile,String outputFile) throws FileNotFoundException{
@@ -73,6 +73,15 @@ public class FileUtils {
         is.close();
         
         return bytesToHexString(bt);
+    }
+    
+    public static void main(String[] args){
+    	try {
+			FileUtils.copyFile("f:\\1.jpg", "f:\\2.jpg");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 	
 }

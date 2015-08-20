@@ -8,7 +8,7 @@ public class CheckTransferedFiles {
 	public static Logger log = Logger.getLogger(CheckTransferedFiles.class);
 	
 	protected void AutoCheck(){
-		log.info("...........checking.......");
+//		log.info("check starting...");
 		PickFileAction.fileList();
 	} 
 

@@ -9,4 +9,8 @@ public class StringUtil {
 	public static void output(String message){
 		System.out.println(message);
 	}
+	
+	public static String getLeaf(String s){
+		return s.substring(s.lastIndexOf("/") + 1);
+	}
 }

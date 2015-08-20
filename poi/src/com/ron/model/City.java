@@ -1,26 +1,28 @@
 package com.ron.model;
 
 public class City {
-	int id;
+	long id;
 	String name;
-	String ipAddress;
+	String ipaddress;
 	int port;
 	String username;
 	String password;
-	String ftppath;
+	String path;
+	boolean active;
+	boolean passivemode;
 
 	public City() {
 	}
 
-	public City(int id, String name) {
+	public City(long id, String name) {
 		this.id = id;
 		this.name = name;
 	}
 	
-	public int getId() {
+	public long getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 	public String getName() {
@@ -29,11 +31,11 @@ public class City {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getIpAddress() {
-		return ipAddress;
+	public String getIpaddress() {
+		return ipaddress;
 	}
-	public void setIpAddress(String ipAddress) {
-		this.ipAddress = ipAddress;
+	public void setIpaddress(String ipaddress) {
+		this.ipaddress = ipaddress;
 	}
 	public int getPort() {
 		return port;
@@ -53,11 +55,26 @@ public class City {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public String getFtppath() {
-		return ftppath;
+	public String getPath() {
+		return path;
 	}
-	public void setFtppath(String ftppath) {
-		this.ftppath = ftppath;
+	public void setPath(String path) {
+		this.path = path;
 	}
+	public boolean isActive() {
+		return active;
+	}
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public boolean isPassivemode() {
+		return passivemode;
+	}
+
+	public void setPassivemode(boolean passivemode) {
+		this.passivemode = passivemode;
+	}
+
 	
 }

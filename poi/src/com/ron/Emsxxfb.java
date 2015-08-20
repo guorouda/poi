@@ -22,14 +22,11 @@ public class Emsxxfb extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final String extension = "do";
 	public static Logger log = Logger.getLogger(Emsxxfb.class);
-	
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
-		// TODO Auto-generated method stub
 		super.init(config);
-		
-        DAOFactory.init("javabase.jndi");
+        DAOFactory.init("javabase.jdbc");
 	}
 
 	@Override
@@ -52,13 +49,13 @@ public class Emsxxfb extends HttpServlet {
 		String action = req.getParameter("action");
 		String _module = req.getRequestURI();
 		String _contextPath = req.getContextPath();
-		String module = _module.substring(_contextPath.length() + 1, _module.length() - extension.length() - 1);//+1 剔除'/'号， -1剔除'.'号
+		String module = _module.substring(_contextPath.length() + 1, _module.length() - extension.length() - 1); //+1: 剔除'/'号， -1: 剔除'.'号
 		
         if(action.equals("login") && module.equals("UserAction")){
-        	//add some code
+        	//TODO add some code
         }else{
 	        if(StringUtil.isEmpty(username)){
-	        	out.print("{success: false, message: '请重新登录'}");
+	        	out.print("{success: false, error: '请重新登录'}");
 	        	return;
 	        }
         }
@@ -79,8 +76,7 @@ public class Emsxxfb extends HttpServlet {
 		return object;
 	}
 	
-	private Command retrieveCommand(String module) throws Exception
-	{
+	private Command retrieveCommand(String module) throws Exception {
 		return (Command)Class.forName("com.ron.view."+ module).newInstance();
 	}
 	

@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 
 import com.ron.exceptions.DAOException;
 import com.ron.model.User;
+import com.ron.pereference.SystemGlobals;
 
 
 /**
@@ -30,14 +31,20 @@ public class UserDAOJDBC extends BaseDAOJDBC implements UserDAO {
     private static final String SQL_FIND_BY_ID = "SELECT id, email, firstname, lastname, birthdate FROM Users WHERE id = ?";
     private static final String SQL_FIND_BY_EMAIL_AND_PASSWORD = "SELECT id, email, firstname, lastname, birthdate FROM Users WHERE email = ? AND password = ?";
     private static final String SQL_LIST_ORDER_BY_ID = "SELECT id, email, firstname, lastname, birthdate FROM Users ORDER BY id";
-    private static final String SQL_INSERT = "INSERT INTO Users (id, email, password, firstname, lastname, birthdate) VALUES (users_id_seq.nextval, ?, ?, ?, ?, ?)";
+//    private static final String SQL_INSERT = "INSERT INTO Users (id, email, password, firstname, lastname, birthdate) VALUES (users_id_seq.nextval, ?, ?, ?, ?, ?)";
+    private static final String SQL_INSERT = "INSERT INTO xxfb_user(id, name, password, depid, right, inuse) VALUES (?, ?, ?, ?, ?, 1)";
     private static final String SQL_UPDATE = "UPDATE Users SET email = ?, firstname = ?, lastname = ?, birthdate = ? WHERE id = ?";
     private static final String SQL_DELETE = "DELETE FROM Users WHERE id = ?";
     private static final String SQL_EXIST_EMAIL = "SELECT id FROM Users WHERE email = ?";
-    private static final String SQL_CHANGE_PASSWORD = "UPDATE Users SET password = ? WHERE id = ?";
+//    private static final String SQL_CHANGE_PASSWORD = "UPDATE Users SET password = ? WHERE id = ?";
+    private static final String SQL_CHANGE_PASSWORD = "UPDATE xxfb_user SET password = ? WHERE id = ?";
     private static final String SQL_LOGIN = "select * from xxfb_user where id =  ? and password = ?";
 
     private static final String SQL_GETVALUE = "select * from xxfb_user where id = ?";
+
+	private static final String SQL_USER_BY_DEPID = "select * from xxfb_user t where t.depid in (select orgcode from post_jg connect by prior orgcode = uporgcode start with orgcode = ?)";
+	
+    private static final String SQL_DESTROY = "DELETE FROM xxfb_user WHERE id = ?";
 
     // Vars ---------------------------------------------------------------------------------------
 
@@ -124,44 +131,75 @@ public class UserDAOJDBC extends BaseDAOJDBC implements UserDAO {
         return users;
     }
 
-    @Override
-    public void create(User user) throws IllegalArgumentException, DAOException {
-        if (user.getId() != null) {
-            throw new IllegalArgumentException(
-                    "User is already created, the user ID is not null.");
-        }
-
-        Object[] values = {
-            user.getName(), user.getPassword(), user.getDepid(), user.getInuse(),
-            user.getRight()
-        };
-
-        Connection connection = null;
+//    @Override
+//    public void create(List<User> list) throws IllegalArgumentException, DAOException {
+////        if (user.getId() != null) {
+////            throw new IllegalArgumentException(
+////                    "User is already created, the user ID is not null.");
+////        }
+//
+//        Object[] values = {
+//        	user.getId(), user.getName(), user.getPassword(), user.getDepid(), 
+//            user.getRight()
+//        };
+//
+//        Connection connection = null;
+//        PreparedStatement preparedStatement = null;
+//        ResultSet generatedKeys = null;
+//
+//        try {
+//            connection = daoFactory.getConnection();
+//            preparedStatement = prepareStatement(connection, SQL_INSERT, false,
+//                    values);
+//            int affectedRows = preparedStatement.executeUpdate();
+//
+//            if (affectedRows == 0) {
+//                throw new DAOException("Creating user failed, no rows affected.");
+//            }
+//            generatedKeys = preparedStatement.getGeneratedKeys();
+//            if (generatedKeys.next()) {
+//                user.setId(generatedKeys.getLong(1) + "");
+//            } else {
+//                throw new DAOException(
+//                        "Creating user failed, no generated key obtained.");
+//            }
+//        } catch (SQLException e) {
+//            throw new DAOException(e);
+//        } finally {
+//            close(connection, preparedStatement, generatedKeys);
+//        }
+//    }
+    
+	@Override
+	public boolean create(List<User> list) throws IllegalArgumentException,
+			DAOException {
+		boolean result = false;
+	    Connection connection = null;
         PreparedStatement preparedStatement = null;
-        ResultSet generatedKeys = null;
+        ResultSet resultSet = null;
 
         try {
             connection = daoFactory.getConnection();
-            preparedStatement = prepareStatement(connection, SQL_INSERT, true,
-                    values);
-            int affectedRows = preparedStatement.executeUpdate();
-
-            if (affectedRows == 0) {
-                throw new DAOException("Creating user failed, no rows affected.");
+            preparedStatement = connection.prepareStatement(SQL_INSERT);
+            for(User user:list){
+        	    Object[] values = {
+        	    		user.getUserid(), user.getName(), SystemGlobals.getDefaultsValue("password"), user.getDepid(), user.getRight()
+        	    };
+        	    setValues(preparedStatement, values);
+                preparedStatement.addBatch();
             }
-            generatedKeys = preparedStatement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                user.setId(generatedKeys.getLong(1) + "");
-            } else {
-                throw new DAOException(
-                        "Creating user failed, no generated key obtained.");
+            int i[] = preparedStatement.executeBatch();
+            if(i.length >0){
+            	result = true;
             }
         } catch (SQLException e) {
             throw new DAOException(e);
         } finally {
-            close(connection, preparedStatement, generatedKeys);
+            close(connection, preparedStatement, resultSet);
         }
-    }
+        
+		return result;
+	}
 
     @Override
     public void update(User user) throws DAOException {
@@ -171,8 +209,7 @@ public class UserDAOJDBC extends BaseDAOJDBC implements UserDAO {
         }
 
         Object[] values = {
-            user.getName(), user.getDepid(), user.getRight(), user.getInuse(),
-            user.getId()
+            user.getName(), user.getDepid(), user.getRight(), user.getInuse(), user.getId()
         };
 
         Connection connection = null;
@@ -290,6 +327,7 @@ public class UserDAOJDBC extends BaseDAOJDBC implements UserDAO {
         User user = new User();
 
         user.setId(resultSet.getString("id"));
+        user.setUserid(resultSet.getString("id"));
         user.setName(resultSet.getString("name"));
         user.setDepid(resultSet.getString("depid"));
         user.setRight(resultSet.getString("right"));
@@ -354,5 +392,68 @@ public class UserDAOJDBC extends BaseDAOJDBC implements UserDAO {
     	
         return value;
     }
+    
+    @Override
+    public List<User> getUserByDepid(String depid) throws DAOException{
+    	   Object[] values = {
+    			   depid
+    	        };
+    	   List<User> list = new ArrayList<User>();
+
+    	   Connection connection = null;
+    	   PreparedStatement preparedStatement = null;
+    	   ResultSet resultSet = null;
+
+    	   try {
+    	       connection = daoFactory.getConnection();
+    	       preparedStatement = prepareStatement(connection, SQL_USER_BY_DEPID, false, values);
+    	       resultSet = preparedStatement.executeQuery();
+    	       while(resultSet.next()) {
+    	    	   User user = new User(resultSet.getString("id"), resultSet.getString("name"), resultSet.getString("depid"),  resultSet.getString("right"));
+    	    	   list.add(user);
+    	       }
+    	    } catch (SQLException e) {
+    	        throw new DAOException(e);
+    	    } finally {
+    	        close(connection, preparedStatement, resultSet);
+    	    }
+    	
+    	return list;
+    }
+
+	@Override
+	public boolean destroy(List<User> list) throws DAOException {
+		boolean result = false;
+	    Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = daoFactory.getConnection();
+            preparedStatement = connection.prepareStatement(SQL_DESTROY);
+            for(User user:list){
+        	    Object[] values = {
+        	    		user.getUserid()
+        	    };
+        	    setValues(preparedStatement, values);
+                preparedStatement.addBatch();
+            }
+            int l[] = preparedStatement.executeBatch();
+            for(int i:l){
+            	System.out.println(i);
+            }
+            if(l.length >0){
+            	result = true;
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        } finally {
+            close(connection, preparedStatement, resultSet);
+        }
+        
+		return result;
+		
+		
+	}
 
 }

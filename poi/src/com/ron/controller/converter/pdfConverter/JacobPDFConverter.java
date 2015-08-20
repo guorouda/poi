@@ -5,7 +5,9 @@ import java.io.File;
 import org.apache.log4j.Logger;
 
 import com.jacob.activeX.ActiveXComponent;
+import com.jacob.com.ComThread;
 import com.jacob.com.Dispatch;
+import com.jacob.com.Variant;
 import com.ron.utils.FileUtils;
 
 public class JacobPDFConverter implements PDFConverter {
@@ -99,30 +101,76 @@ public class JacobPDFConverter implements PDFConverter {
 		
 		
 	}
+	
+	
 	public static void ppt2PDF(String inputFile,String pdfFile){
-		System.out.println(System.getProperty("java.library.path"));
+		System.setProperty( "java.library.path", "C:\\Program Files\\Java\\jre7\\bin" );
 		log.info(System.getProperty("java.library.path"));
+		log.info(inputFile);
+		
+		ComThread.InitSTA(true);  
+		
 		ActiveXComponent app = new ActiveXComponent("PowerPoint.Application");
-		//app.setProperty("Visible", msofalse);
-		Dispatch ppts = app.getProperty("Presentations").toDispatch();
+		try{	
+//			app.setProperty("Visible", new Variant(false));
+			Dispatch ppts = app.getProperty("Presentations").toDispatch();
+			
+			Dispatch ppt = Dispatch.call(ppts,
+										"Open",
+										inputFile,
+										true,//ReadOnly
+										true,//Untitled指定文件是否有标题
+										false//WithWindow指定文件是否可见
+										).toDispatch();
+			
+			Dispatch.call(ppt,
+						"SaveAs",
+						pdfFile,
+						ppSaveAsPDF	
+						);
+					
+			Dispatch.call(ppt, "Close");
+		}catch(Exception e){
+			log.error("error: ", e);
+		}finally{
+			app.invoke("Quit", new Variant[] {});
+			ComThread.Release(); 
+		}
 		
-		Dispatch ppt = Dispatch.call(ppts,
-									"Open",
-									inputFile,
-									true,//ReadOnly
-									true,//Untitled指定文件是否有标题
-									false//WithWindow指定文件是否可见
-									).toDispatch();
+	}
+	
+	
+	public static void ppt2PDF1(String inputFile,String pdfFile){
+		System.setProperty( "java.library.path", "C:\\Program Files\\Java\\jre7\\bin" );
 		
-		Dispatch.call(ppt,
-					"SaveAs",
-					pdfFile,
-					ppSaveAsPDF	
-					);
-				
-		Dispatch.call(ppt, "Close");
-		
-		app.invoke("Quit");
+		ActiveXComponent app = new ActiveXComponent("PowerPoint.Application");
+		try{	
+//			app.setProperty("Visible", new Variant(false));
+			Dispatch ppts = app.getProperty("Presentations").toDispatch();
+			
+			Dispatch ppt = Dispatch.invoke(ppts,
+										"Open",
+										Dispatch.Method,
+										new Object[]{
+											inputFile,
+											new Variant(false),
+											new Variant(false)
+										},
+										new int[0]
+						  ).toDispatch();
+			
+			Dispatch.call(ppt,
+						"SaveAs",
+						pdfFile,
+						ppSaveAsPDF	
+						);
+					
+			Dispatch.call(ppt, "Close");
+		}catch(Exception e){
+			log.error("error: ", e);
+		}finally{
+			app.invoke("Quit", new Variant[] {});
+		}
 		
 	}
 	

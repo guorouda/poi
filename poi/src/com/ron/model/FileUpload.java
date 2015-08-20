@@ -1,5 +1,7 @@
 package com.ron.model;
 
+import java.sql.Timestamp;
+
 public class FileUpload {
 	String id;
 	String filename;
@@ -7,7 +9,7 @@ public class FileUpload {
 	String uuid;
 	int count;
 	String url;
-	String uploadtime;
+	Timestamp uploadtime;
 	String uploaduser;
 	String type;
 	long duration;
@@ -61,11 +63,11 @@ public class FileUpload {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	public String getUploadtime() {
+	public Timestamp getUploadtime() {
 		return uploadtime;
 	}
-	public void setUploadtime(String uploadtime) {
-		this.uploadtime = uploadtime;
+	public void setUploadtime(Timestamp timestamp) {
+		this.uploadtime = timestamp;
 	}
 	public String getUploaduser() {
 		return uploaduser;

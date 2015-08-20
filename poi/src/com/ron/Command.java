@@ -33,7 +33,6 @@ public abstract class Command {
 		Object object = null;
 		
 		try {
-			log.info(module + ":" + action);
 			object = this.getClass().getMethod(action, NO_ARGS_CLASS).invoke(this, NO_ARGS_OBJECT);
 		} catch (IllegalAccessException e) {
 			log.error("error: ", e);
@@ -72,9 +71,9 @@ public abstract class Command {
 	
 //	public abstract int myadd();
 //	public abstract String pr();
-	public abstract String list2();
+//	public abstract String list2();
 
-	public abstract String list();
+//	public abstract String list();
 //	public abstract String delete();
 //	public abstract String create();
 	

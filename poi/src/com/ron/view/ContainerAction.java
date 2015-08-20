@@ -1,23 +1,61 @@
 package com.ron.view;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
+import java.util.List;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import com.ron.Command;
+import com.ron.dao.ContainerDAO;
+import com.ron.dao.DAOFactory;
+import com.ron.dao.PlayListFileDAO;
+import com.ron.model.Container;
+import com.ron.model.PlayListFile;
 
 public class ContainerAction extends Command {
 
-	@Override
-	public String list2() {
-		String result = "[ { \"name\": \"Kitchen Sink\", \"thumb\": \"sink.png\", \"url\": \"kitchensink\", \"type\": \"Application\" }, { \"name\": \"Twitter app\", \"thumb\": \"twitter.png\", \"url\": \"twitter\", \"type\": \"Application\" }, { \"name\": \"Kiva app\", \"thumb\": \"kiva.png\", \"url\": \"kiva\", \"type\": \"Application\" }, { \"name\": \"Geocongress\", \"thumb\": \"geocongress.png\", \"url\": \"geocongress\", \"type\": \"Application\" }, { \"name\": \"AJAX\", \"thumb\": \"ajax.png\", \"url\": \"ajax\", \"type\": \"Example\" }, { \"name\": \"Carousel\", \"thumb\": \"carousel.png\", \"url\": \"carousel\", \"type\": \"Example\" }, { \"name\": \"Drag &amp; Drop\", \"thumb\": \"DnD.png\", \"url\": \"dragdrop\", \"type\": \"Example\" }, { \"name\": \"Forms\", \"thumb\": \"forms.png\", \"url\": \"forms\", \"type\": \"Example\" }, { \"name\": \"Guide\", \"thumb\": \"guide.png\", \"url\": \"guide\", \"type\": \"Example\" }, { \"name\": \"Icons\", \"thumb\": \"icons.png\", \"url\": \"icons\", \"type\": \"Example\" }, { \"name\": \"Map\", \"thumb\": \"map.png\", \"url\": \"map\", \"type\": \"Example\" }, { \"name\": \"Nested List\", \"thumb\": \"nestedList.png\", \"url\": \"nestedlist\", \"type\": \"Example\" }, { \"name\": \"Overlays\", \"thumb\": \"overlays.png\", \"url\": \"overlays\", \"type\": \"Example\" }, { \"name\": \"Picker\", \"thumb\": \"picker.png\", \"url\": \"picker\", \"type\": \"Example\" }, { \"name\": \"Sortable\", \"thumb\": \"sortable.png\", \"url\": \"sortable\", \"type\": \"Example\" }, { \"name\": \"Tabs\", \"thumb\": \"tabs.png\", \"url\": \"tabs\", \"type\": \"Example\" }, { \"name\": \"Tabs 2\", \"thumb\": \"tabs2.png\", \"url\": \"tabs2\", \"type\": \"Example\" }, { \"name\": \"Toolbars\", \"thumb\": \"toolbars.png\", \"url\": \"toolbars\", \"type\": \"Example\" }, { \"name\": \"YQL\", \"thumb\": \"yql.png\", \"url\": \"yql\", \"type\": \"Example\" }]";
-		return result;
-	}
-
-	@Override
 	public String list(){
 		return "{\"count\":\"1\", \"user\":[{\"filename\":\"sara_pink.jpg\",\"duration\":\"2154\",\"id\":\"1407243286000\",\"uuid\":\"2222222222222222\"}]}";
 	}
 	
 	public String update(){
+		String temp;  
+		StringBuffer sb = new StringBuffer();
+		BufferedReader br;
 		
-		return "";
+		try {
+			br = new BufferedReader(new InputStreamReader(req.getInputStream(), "utf-8"));
+			while ((temp = br.readLine()) != null) {  
+			    sb.append(temp);  
+			}  
+			br.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
+		
+		String item = sb.toString();
+    	if(!item.startsWith("[")){
+    		item = "[" + item + "]";
+    	}		
+    	
+	    List<Container> list = null;
+    	try{
+			Gson gson = new Gson(); 
+			Type type = new TypeToken<List<Container>>(){}.getType();
+		    list = gson.fromJson(item, type);
+    	}catch(JsonSyntaxException e){
+    		log.error("error: ", e);
+    	}
+	    
+        ContainerDAO containerDAO = DAOFactory.getInstance().getDAOImpl(ContainerDAO.class);
+        containerDAO.update(list);
+		
+		return "{success: true, message: \"成功插入\", count: " + list.size() + ", user:[{\"message\": \"ok!\"}]}";
 	}
 	
 }

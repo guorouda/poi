@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.Expand;
 
 import com.ron.Command;
 import com.ron.controller.FileUploadController;
@@ -25,10 +28,60 @@ public class PickFileAction extends Command{
 	public static Logger log = Logger.getLogger(PickFileAction.class);
 	
 	public static void fileList(){
-		fileList("C:\\inetpub\\ftproot"); 
+		fileList(SystemGlobals.getDefaultsValue("ftproot")); 
 	}
 	
 	private static void fileList(String filePath){
+	     File file = new File(filePath);  
+	     if (file.isDirectory()) {  
+	         File[] files = file.listFiles();  
+	         for (int i = 0; i < files.length; i++) {  
+	        	String path = SystemGlobals.getDefaultsValue("application.path") + File.separator + "download" + File.separator + "temp";
+	            String filename = files[i].getName();  
+	           	File newFile =  new File(path + File.separator + filename);
+				if(!files[i].renameTo(newFile)){
+					log.info(filename + "读取文件失败，:-(.....");
+				}else{
+					log.info(filename + "读取文件成功！！！！！");
+					if("zip".equalsIgnoreCase(FileUtils.getFileExtension(filename))){
+						unzip(path + File.separator + filename, path);
+					}
+				}
+	         }  
+	     }
+		
+	}
+	
+	private static void unzip(String zipFilepath, String destDir){
+		
+		while(true){
+			try{
+				Project proj = new Project();
+				Expand expand = new Expand();
+				expand.setProject(proj);
+				expand.setTaskType("unzip");
+				expand.setTaskName("unzip");
+				expand.setEncoding("utf-8");
+		
+				expand.setSrc(new File(zipFilepath));
+				expand.setDest(new File(destDir));
+				expand.execute();
+				break;
+			}catch(BuildException e){
+				log.info("expand error!");
+			}
+			
+			try{
+				Thread.sleep(5000);
+			}catch(InterruptedException e){
+				
+			}
+		}
+			
+	}
+	
+	//XXX
+	public static void fileList1(String filePath){
         List<Container> list = new ArrayList<Container>();
         
         long time = 5000;
@@ -44,8 +97,8 @@ public class PickFileAction extends Command{
                	String extension = name.substring(name.lastIndexOf(".") + 1, name.length());
                	
                	String targetPath = SystemGlobals.getDefaultsValue("application.path") + File.separator + "download" + File.separator + "temp" + File.separator + uuid + "." + extension;
-               	log.info(targetPath);
-//               	File targetFile = new File(targetPath);
+//               	log.info(targetPath);
+//         	    	File targetFile = new File(targetPath);
                	
                	File newDirectory =  new File(SystemGlobals.getDefaultsValue("application.path") + File.separator + "download" + File.separator + "temp");
                	String newName =  uuid + "." + extension;
@@ -110,18 +163,22 @@ public class PickFileAction extends Command{
 		File newFile = new File(newDirectory, newName);
 		oldFile.renameTo(newFile);
 	}
+	
+	public static void moveFile(File oldFile, File newFile){
+		oldFile.renameTo(newFile);
+	}
 
 	public static void main(String[] args){
-		fileList();
+//		unzip("f:/111.zip", "f:/");
+//		File f = new File("f:/5ccd83fd-dc2b-4b4c-a429-53e16734c535.zip");
+//		File f1 = new File("C:/apache-tomcat-7.0.35/wtpwebapps/poi/download/5ccd83fd-dc2b-4b4c-a429-53e16734c535.zip");
+//		moveFile(f, f1);
+		if("zip".equalsIgnoreCase(FileUtils.getFileExtension("aaaaa.zip"))){
+			log.info("ok");
+		}
 	}
 	
-	@Override
-	public String list2() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	@Override
 	public String list() {
 		// TODO Auto-generated method stub
 		return null;
