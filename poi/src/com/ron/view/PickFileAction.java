@@ -2,6 +2,14 @@ package com.ron.view;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -32,23 +40,132 @@ public class PickFileAction extends Command{
 	}
 	
 	private static void fileList(String filePath){
-	     File file = new File(filePath);  
+    	final String downloadpath = SystemGlobals.getDefaultsValue("application.path") + File.separator + "download" + File.separator + "temp";
+    	final String warpath = FileUtils.getParentPath(SystemGlobals.getDefaultsValue("application.path"));
+    	
+    	Path target = null;    	
+		
+		Path base = Paths.get(filePath);
+		if(Files.isDirectory(base)){
+			try {
+				DirectoryStream<Path> paths = Files.newDirectoryStream(base);  
+					for(Path p : paths){  
+		                log.info(p.toString());
+
+						String filename = p.getFileName().toString();
+						switch(FileUtils.getFileExtension(filename).toLowerCase()){
+							case "zip":
+								target = Paths.get(downloadpath + File.separator + p.getFileName());
+								break;
+							case "war":
+								target = Paths.get(warpath + File.separator + p.getFileName());
+								break;
+							default:
+								log.info("unknow file type!");
+						}   
+							
+						if(Files.move(p, target, StandardCopyOption.REPLACE_EXISTING)==target){
+							log.info(filename + " 读取文件成功！！！！！");
+							if(FileUtils.getFileExtension(filename).equalsIgnoreCase("zip")){
+								unzip(downloadpath + File.separator + filename, downloadpath);
+							}
+						}else{
+							log.info(filename + " 读取文件失败");
+						}
+					} 
+						
+			} catch (IOException e) {
+				e.printStackTrace();
+				
+			}  
+			
+		}
+		
+		
+	}
+	
+	
+	
+	private static void fileList3(String filePath){
+    	final String path = SystemGlobals.getDefaultsValue("application.path") + File.separator + "download" + File.separator + "temp" + File.separator + "1.gif";
+    	final String warpath = FileUtils.getParentPath(SystemGlobals.getDefaultsValue("application.path"));
+    	
+    	Path warsource = Paths.get(warpath);    	
+		
+		Path base = Paths.get(filePath);
+		if(Files.isDirectory(base)){
+			try {
+				Files.walkFileTree(base, new FileVisitor<Object>(){
+
+					@Override
+					public FileVisitResult preVisitDirectory(Object dir,
+							BasicFileAttributes attrs) throws IOException {
+						log.info(dir);
+						return FileVisitResult.CONTINUE;
+					}
+
+					@Override
+					public FileVisitResult visitFile(Object file,
+							BasicFileAttributes attrs) throws IOException {
+						log.info(file);
+						Path source = Paths.get((String)file);
+						if(Files.exists(source)){
+							log.info(".....................................");
+						}else{
+							log.info("#######################################");
+						}
+						Path target = Paths.get("c:\\tmp\\1111.gif");
+						Files.copy(source, target);
+						log.info(path);
+						
+						return FileVisitResult.CONTINUE;
+					}
+
+					@Override
+					public FileVisitResult visitFileFailed(Object file,
+							IOException exc) throws IOException {
+						exc.printStackTrace();
+						return FileVisitResult.CONTINUE;
+					}
+
+					@Override
+					public FileVisitResult postVisitDirectory(Object dir,
+							IOException exc) throws IOException {
+						return FileVisitResult.CONTINUE;
+					}
+					
+				});
+			} catch (IOException e) {
+				e.printStackTrace();
+				
+			}  
+
+			
+			
+		}
+		
+	 /*    File file = new File(filePath);  
 	     if (file.isDirectory()) {  
 	         File[] files = file.listFiles();  
 	         for (int i = 0; i < files.length; i++) {  
-	        	String path = SystemGlobals.getDefaultsValue("application.path") + File.separator + "download" + File.separator + "temp";
 	            String filename = files[i].getName();  
 	           	File newFile =  new File(path + File.separator + filename);
 				if(!files[i].renameTo(newFile)){
-					log.info(filename + "读取文件失败，:-(.....");
+					log.info(filename + " 读取文件失败，:-(.....");
 				}else{
-					log.info(filename + "读取文件成功！！！！！");
-					if("zip".equalsIgnoreCase(FileUtils.getFileExtension(filename))){
-						unzip(path + File.separator + filename, path);
+					log.info(filename + " 读取文件成功！！！！！");
+					switch(FileUtils.getFileExtension(filename).toLowerCase()){
+						case "zip":
+							unzip(path + File.separator + filename, path);
+							break;
+						case "war":
+							
+							break;
 					}
+						
 				}
 	         }  
-	     }
+	     }*/
 		
 	}
 	
@@ -168,20 +285,25 @@ public class PickFileAction extends Command{
 		oldFile.renameTo(newFile);
 	}
 
-	public static void main(String[] args){
-//		unzip("f:/111.zip", "f:/");
-//		File f = new File("f:/5ccd83fd-dc2b-4b4c-a429-53e16734c535.zip");
-//		File f1 = new File("C:/apache-tomcat-7.0.35/wtpwebapps/poi/download/5ccd83fd-dc2b-4b4c-a429-53e16734c535.zip");
-//		moveFile(f, f1);
-		if("zip".equalsIgnoreCase(FileUtils.getFileExtension("aaaaa.zip"))){
-			log.info("ok");
-		}
-	}
-	
-
 	public String list() {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public static void main(String[] args){
+		Path base = Paths.get("C:\\apache-tomcat-7.0.35\\wtpwebapps\\poi\\download\\temp\\1.bak.gif");
+		Path base2 = Paths.get("c:\\tmp\\aaa.gif");
+		Path base3 = Paths.get("C:\\inetpub\\ftproot\\xxfb\\12.gif");
+		
+		try {
+			Files.move(base3, base);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+
 	
 }

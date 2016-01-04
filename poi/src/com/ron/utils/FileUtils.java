@@ -21,6 +21,11 @@ public class FileUtils {
         return fileName.substring(splitIndex + 1);
 	}
 	
+	public static String getParentPath(String fileName){
+		int splitIndex = fileName.lastIndexOf(File.separator);
+        return fileName.substring(0, splitIndex + 1);
+	}
+	
 	public static String getFileExtension(String fileName){
 		int splitIndex = fileName.lastIndexOf(".");
 		return fileName.substring(splitIndex + 1); 
