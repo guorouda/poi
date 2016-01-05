@@ -83,7 +83,7 @@ public abstract class DAOFactory {
         if (name == null) {
             throw new DAOConfigurationException("Database name is null.");
         }
-        System.out.println("\"DAOFactory getInstance\" is starting...");
+//        System.out.println("\"DAOFactory getInstance\" is starting...");
 
         DAOProperties properties = new DAOProperties(name);
         String url = properties.getProperty(PROPERTY_URL, true);
@@ -145,7 +145,7 @@ public abstract class DAOFactory {
     
     public <DAO extends BaseDAO> DAO getDAOImpl(Class<DAO> daoInterface) throws DAOConfigurationException {
 		String daoInterfaceName = daoInterface.getName();
-//		System.out.println("daoInterfaceName: " + daoInterfaceName);
+		System.out.println("daoInterfaceName: " + daoInterfaceName);
 		
 		if (!daoInterface.isInterface()) {
 		    throw new DAOConfigurationException("Class '" + daoInterfaceName + "'"

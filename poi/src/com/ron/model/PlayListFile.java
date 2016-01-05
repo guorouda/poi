@@ -1,5 +1,6 @@
 package com.ron.model;
 
+//播放列表下的所有文件
 public class PlayListFile {
 	String listid;
 	int seq;
@@ -9,6 +10,13 @@ public class PlayListFile {
 	String type;
 	long duration;
 	
+	@Override
+	public String toString() {
+		return "PlayListFile [listid=" + listid + ", seq=" + seq
+				+ ", filename=" + filename + ", uuid=" + uuid + ", id=" + id
+				+ ", type=" + type + ", duration=" + duration + "]";
+	}
+
 	public PlayListFile(String listid, int seq, String filename, String uuid, long duration) {
 		this.listid = listid;
 		this.seq = seq;

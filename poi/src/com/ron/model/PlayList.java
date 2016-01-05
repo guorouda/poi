@@ -1,6 +1,8 @@
 package com.ron.model;
 
+//播放列表
 public class PlayList {
+	
 	
 	String id;
 	String listname;

@@ -26,7 +26,6 @@ public class Emsxxfb extends HttpServlet {
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-        DAOFactory.init("javabase.jdbc");
 	}
 
 	@Override

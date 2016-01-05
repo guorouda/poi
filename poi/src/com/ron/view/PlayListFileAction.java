@@ -20,6 +20,7 @@ import com.ron.Command;
 import com.ron.dao.DAOFactory;
 import com.ron.dao.PlayListFileDAO;
 import com.ron.model.PlayListFile;
+import com.ron.model.PlayListFilePIC;
 
 public class PlayListFileAction extends Command {
 
@@ -100,10 +101,24 @@ public class PlayListFileAction extends Command {
 	}
 	
 	public String list(){
-        PlayListFileDAO playListFileDAO = DAOFactory.getInstance().getDAOImpl(PlayListFileDAO.class);
-        List list = playListFileDAO.list(username);
+        List<PlayListFile> list = getList(username);
         
 		return TellFront(list, "user").toString();
+	}
+	
+	public List<PlayListFile> getList(String id){
+		PlayListFileDAO playListFileDAO = DAOFactory.getInstance().getDAOImpl(PlayListFileDAO.class);
+        List<PlayListFile> list = playListFileDAO.list(id);
+        
+        return list;
+	}
+	
+	public List<PlayListFilePIC> getListPIC(String id){
+		PlayListFileDAO playListFileDAO = DAOFactory.getInstance().getDAOImpl(PlayListFileDAO.class);
+        List<PlayListFilePIC> list = playListFileDAO.listpic(id);
+        
+        return list;
+		
 	}
 	
 }
